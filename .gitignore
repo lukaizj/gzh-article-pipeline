@@ -1,0 +1,14 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Local sensitive credentials (DO NOT COMMIT REAL SECRET)
+config.json
+gzh-article-pipeline/references/config.json

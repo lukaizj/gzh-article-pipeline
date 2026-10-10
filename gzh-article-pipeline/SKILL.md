@@ -41,7 +41,7 @@ description: >-
 ## 微信公众平台开发者凭证配置
 - **AppID**: `YOUR_WECHAT_APPID`
 - **AppSecret**: `YOUR_WECHAT_APPSECRET`
-- **配置文件**: `references/config.json`
+- **配置文件**: `references/config.json`（已加入 .gitignore，请在本地配置）
 
 ---
 

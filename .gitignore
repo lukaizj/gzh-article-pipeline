@@ -12,3 +12,4 @@ venv/
 # Local sensitive credentials (DO NOT COMMIT REAL SECRET)
 config.json
 gzh-article-pipeline/references/config.json
+.token_*.json

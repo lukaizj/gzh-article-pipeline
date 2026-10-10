@@ -1,7 +1,8 @@
 {
-  "appid": "YOUR_WECHAT_APPID",
-  "appsecret": "YOUR_WECHAT_APPSECRET",
-  "default_author": "SRE 架构实战",
+  "appid": "YOUR_APPID_HERE",
+  "appsecret": "YOUR_APPSECRET_HERE",
+  "default_author": "你的公众号名称",
   "default_theme": "theme-olive-journal",
-  "canvas_ratio": "16:9"
+  "canvas_ratio": "16:9",
+  "open_comment": 1
 }

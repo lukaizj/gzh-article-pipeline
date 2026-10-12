@@ -4,6 +4,7 @@
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-green.svg)](https://github.com/openai/codex)
 [![Antigravity](https://img.shields.io/badge/Google-Antigravity-orange.svg)](https://deepmind.google)
 [![WeChat Official Account](https://img.shields.io/badge/WeChat-Official%20Account%20API-07C160.svg)](https://mp.weixin.qq.com)
+[![Visitors](https://visitor-badge.laobi.icu/badge?page_id=lukaizj.gzh-article-pipeline)](https://github.com/lukaizj/gzh-article-pipeline)
 
 > **把文章链接、演讲稿或技术文档，一键转化为带火柴人插图、深度去 AI 味、排版精致并直推微信公众号草稿箱的爆款推文。**
 

@@ -156,11 +156,14 @@ def ensure_safe_crop_cover(cover_path):
         if not non_bg_coords:
             return cover_path
 
+        if cover_path.endswith("_safe_crop.jpg"):
+            return cover_path
+
         ys = [c[1] for c in non_bg_coords]
         y_min, y_max = min(ys), max(ys)
         
-        min_top_margin = int(crop_h * 0.15)
-        min_bottom_margin = int(crop_h * 0.12)
+        min_top_margin = int(crop_h * 0.03)
+        min_bottom_margin = int(crop_h * 0.02)
         safe_top = crop_y0 + min_top_margin
         safe_bottom = crop_y1 - min_bottom_margin
 
@@ -265,22 +268,38 @@ def main():
     title = args.title or "微信公众号精选推文"
     digest = args.digest or "点击查看精彩深度推文与系统性实操拆解。"
 
+    if len(title) > 26:
+        print(f"\n⚠️  [标题预警] 当前标题共 {len(title)} 个字符，超过 26 字符上限！")
+        print("   在大屏/小屏手机微信常读订阅号列表中容易被省略号截断，建议精简至 26 字以内以提升打开率。\n")
+
     if args.update_draft:
         print(f"4. 正在更新已有草稿 (Media ID: {args.update_draft})...")
         draft_media_id = update_draft(token, args.update_draft, title, args.author, digest, content, thumb_media_id)
-        print("\n" + "="*50)
+        print("\n" + "="*55)
         print("🎉 恭喜！图文已成功更新至微信公众号草稿箱！")
-        print(f"文章标题: {title}")
+        print(f"文章标题: {title} ({len(title)}字)")
         print(f"Draft Media ID: {draft_media_id}")
-        print("="*50 + "\n")
+        print("-" * 55)
+        print("⏰【最佳定时群发时段推荐】:")
+        print("   👑 首选战神档: 07:00 ~ 07:20 (历史平均阅读 2,250.9，享有全天16小时发酵)")
+        print("   🌙 备选休闲档: 20:45 ~ 21:15 (视听/娱乐/音源类神器优选)")
+        print("   🛑 绝对死亡禁区: 09:30 ~ 11:30 (历史均阅仅 140~280，早会与邮件清零黑洞)")
+        print("   📅 周内建议: 周五/周六早晨爆发力最强；周一全网高压黑洞(均阅69.4)")
+        print("="*55 + "\n")
     else:
         print("4. 正在提交图文到微信公众号草稿箱...")
         draft_media_id = add_draft(token, title, args.author, digest, content, thumb_media_id)
-        print("\n" + "="*50)
+        print("\n" + "="*55)
         print("🎉 恭喜！图文已成功推送至微信公众号草稿箱！")
-        print(f"文章标题: {title}")
+        print(f"文章标题: {title} ({len(title)}字)")
         print(f"Draft Media ID: {draft_media_id}")
-        print("="*50 + "\n")
+        print("-" * 55)
+        print("⏰【最佳定时群发时段推荐】:")
+        print("   👑 首选战神档: 07:00 ~ 07:20 (历史平均阅读 2,250.9，享有全天16小时发酵)")
+        print("   🌙 备选休闲档: 20:45 ~ 21:15 (视听/娱乐/音源类神器优选)")
+        print("   🛑 绝对死亡禁区: 09:30 ~ 11:30 (历史均阅仅 140~280，早会与邮件清零黑洞)")
+        print("   📅 周内建议: 周五/周六早晨爆发力最强；周一全网高压黑洞(均阅69.4)")
+        print("="*55 + "\n")
 
 if __name__ == "__main__":
     main()

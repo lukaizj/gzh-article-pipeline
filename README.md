@@ -1,7 +1,7 @@
 # 🚀 GZH Article Pipeline (微信公众号全自动推文生产与发布流水线)
 
 <p align="center">
-  <img src="assets/workflow-architecture.jpg" alt="GZH Article Pipeline Banner" width="100%" style="border-radius: 8px;" />
+  <img src="assets/hero-banner.jpg" alt="GZH Article Pipeline Banner" width="100%" style="border-radius: 8px;" />
 </p>
 
 <p align="center">

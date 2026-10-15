@@ -223,6 +223,17 @@ def generate_image_via_gemini_web(prompt, output_file_path, timeout=120):
     return output_file_path
 
 if __name__ == "__main__":
-    w, t = find_gemini_tab()
-    ok, res = execute_js(w, t, "document.title")
-    print(f"Gemini Web Bridge 就绪! [窗口 {w}, 标签 {t}]: {res}")
+    import argparse
+    parser = argparse.ArgumentParser(description="Gemini Web Pro 自动化生图降级桥接器")
+    parser.add_argument("--prompt", type=str, help="生图提示词")
+    parser.add_argument("--output", type=str, help="图片保存绝对路径 (e.g. /path/to/image.jpg)")
+    parser.add_argument("--timeout", type=int, default=120, help="轮询超时时间(秒)，默认 120 秒")
+    args = parser.parse_args()
+
+    if args.prompt and args.output:
+        generate_image_via_gemini_web(args.prompt, args.output, timeout=args.timeout)
+    else:
+        w, t = find_gemini_tab()
+        ok, res = execute_js(w, t, "document.title")
+        print(f"Gemini Web Bridge 就绪! [窗口 {w}, 标签 {t}]: {res}")
+        print("用法: python3 gemini_web_bridge.py --prompt \"...\" --output \"/path/to/image.jpg\"")

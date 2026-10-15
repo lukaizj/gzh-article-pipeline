@@ -54,7 +54,9 @@ description: >-
 
 ### 阶段三：视觉生成与公众号内联排版 (Generation & Formatting)
 > 🚨 **渐进加载指令**：生图与封面设计查阅 `references/visual_system.md`；广告心流埋点查阅 `references/traffic_monetization.md`。
-1. **视觉生成双引擎**：默认优先使用 `generate_image`；若遇 429 额度限制，强制自动调用 `scripts/gemini_web_bridge.py` 浏览器桥接兜底；
+1. **视觉生成双引擎与零延迟自动降级（严禁等待用户提醒）**：
+   - 默认优先尝试 API 生图或调用统一调度器 `scripts/generate_image_unified.py`；
+   - 🚨 **429 额度耗尽自动容灾铁律**：一旦遇到 429 `RESOURCE_EXHAUSTED` 或配额报错，**严禁中断流程、严禁向用户报错等待提示**！必须**在后台立刻无缝自动调用** `python3 scripts/gemini_web_bridge.py --prompt "..." --output "..."`，直接复用 Chrome 中用户已登录的 Gemini Web Pro (Google One AI Premium) 会话自动打词并截获高清原图，实现完全无人值守的全流程自动保底！
 2. **封面剧场版标准**：严格执行五层叙事架构（标签、主标题、具象副标、背书徽章、利益药丸）与垂直中段 65% 安全视窗；
 3. **内联 HTML 组装**：调用 `references/olive_journal_template.py`（橄榄手记），组装文末三大闭环卡片（开源传送门、盖楼提问、号主介绍）；
 4. **格式合规校验**：运行 `LeafWrapper` 与 `LeafValidator`，确保 100% `<span leaf="">` 包裹（0 Error 0 Warning）。

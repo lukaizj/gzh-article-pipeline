@@ -9,6 +9,7 @@
   <a href="https://github.com/openai/codex"><img src="https://img.shields.io/badge/Codex-Skill-green.svg?style=flat-square" alt="Codex Skill" /></a>
   <a href="https://deepmind.google"><img src="https://img.shields.io/badge/Google-Antigravity-orange.svg?style=flat-square" alt="Google Antigravity" /></a>
   <a href="https://mp.weixin.qq.com"><img src="https://img.shields.io/badge/WeChat-Official%20Account%20API-07C160.svg?style=flat-square" alt="WeChat Official Account API" /></a>
+  <a href="https://github.com/lukaizj/gzh-article-pipeline/stargazers"><img src="https://img.shields.io/github/stars/lukaizj/gzh-article-pipeline?style=flat-square&logo=github&label=Stars" alt="GitHub Stars" /></a>
   <a href="https://github.com/lukaizj/gzh-article-pipeline"><img src="https://visitor-badge.laobi.icu/badge?page_id=lukaizj.gzh-article-pipeline" alt="Visitors" /></a>
 </p>
 
@@ -26,6 +27,9 @@
   <a href="#安装与配置-installation">安装配置</a> •
   <a href="#商务合作与技术支持-contact--services">合作支持</a>
 </p>
+
+> [!TIP]
+> 💡 **如果这套流水线帮您省下了每天排版的 1 小时，欢迎顺手在右上角点个 ⭐️ [Star](https://github.com/lukaizj/gzh-article-pipeline) 支持，这是作者持续开源维护的最大动力！**
 
 ---
 
@@ -215,7 +219,7 @@ export WECHAT_APPSECRET="your_wechat_appsecret"
 
 ## 商务合作与技术支持 (Contact & Services)
 
-> 开源不易，如果本项目为您或团队省下了宝贵的排版时间与昂贵的第三方编辑器会员费，欢迎请作者喝杯咖啡！您的支持是本项目持续迭代与开源的最大动力。
+> 💡 **开源不易，如果这套流水线帮您省下了每天排版的 1 小时，欢迎顺手在右上角点个 ⭐️ [Star](https://github.com/lukaizj/gzh-article-pipeline) 支持，这是作者持续开源维护的最大动力！** 也欢迎请作者喝杯冰美式，感谢每一位同行的认可。
 
 | 微信赞赏支持 (Buy Me a Coffee) | 主理人微信 (交流群 / 商业定制) |
 | :---: | :---: |

@@ -8,8 +8,13 @@ __pycache__/
 *$py.class
 venv/
 .env
+*.env
 
 # Local sensitive credentials (DO NOT COMMIT REAL SECRET)
 config.json
-gzh-article-pipeline/references/config.json
+*/config.json
+**/config.json
+!config.example.json
 .token_*.json
+*.pem
+*.key

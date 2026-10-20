@@ -90,7 +90,10 @@ def add_draft(access_token, title, author, digest, content, thumb_media_id, open
             }
         ]
     }
-    headers = {"Content-Type": "application/json; charset=utf-8"}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Content-Type": "application/json; charset=utf-8"
+    }
     resp = requests.post(url, data=json.dumps(payload, ensure_ascii=False).encode("utf-8"), headers=headers, timeout=30)
     data = resp.json()
     if "media_id" in data:
@@ -116,7 +119,10 @@ def update_draft(access_token, media_id, title, author, digest, content, thumb_m
             "only_fans_can_comment": 0
         }
     }
-    headers = {"Content-Type": "application/json; charset=utf-8"}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Content-Type": "application/json; charset=utf-8"
+    }
     resp = requests.post(url, data=json.dumps(payload, ensure_ascii=False).encode("utf-8"), headers=headers, timeout=30)
     data = resp.json()
     if data.get("errcode", 0) == 0:

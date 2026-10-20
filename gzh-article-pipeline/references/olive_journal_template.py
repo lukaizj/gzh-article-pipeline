@@ -148,23 +148,15 @@ def divider():
   <span style="display:inline-block;width:48px;height:2px;background:#bfc1b7;vertical-align:middle;"><span leaf="">&nbsp;</span></span>
 </section>'''
 
-def header_meta(category_tag, title, author="奇点造物所", read_time="8 分钟", subtitle="深度拆解"):
+def header_meta(*args, **kwargs):
     """
-    推文顶部元数据卡片
+    【永久废弃且严禁在正文中使用】
+    微信公众平台在移动端与桌面端已自带官方原生置顶大标题与作者栏。
+    在正文中再次添加 header_meta 会导致标题和作者信息重复出现两次（严重影响阅读体验）！
+    正文必须直接从第一段故事切入，严禁添加任何重复的 h1 标题块。
+    为防止任何已有模板或代码误调用，本函数已安全重构为直接返回空字符串 ""。
     """
-    return f'''<section style="margin-bottom:28px;">
-  <section style="font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,sans-serif;">
-    <p style="margin:0 0 6px;font-size:12px;font-weight:700;color:#2e6cc4;letter-spacing:1.5px;text-transform:uppercase;"><span leaf="">{category_tag}</span></p>
-    <h1 style="margin:0 0 12px;font-size:22px;line-height:1.45;color:#23251d;font-weight:800;"><span leaf="">{title}</span></h1>
-    <section style="display:flex;align-items:center;gap:12px;font-size:12px;color:#65675e;">
-      <span><span leaf="">文 / {author}</span></span>
-      <span><span leaf="">•</span></span>
-      <span><span leaf="">阅读时间约 {read_time}</span></span>
-      <span><span leaf="">•</span></span>
-      <span><span leaf="">{subtitle}</span></span>
-    </section>
-  </section>
-</section>'''
+    return ""
 
 def github_portal_card(github_url, online_mirror=None, stars="100,000+", forks="10,000+", maintainers="1,000+"):
     """

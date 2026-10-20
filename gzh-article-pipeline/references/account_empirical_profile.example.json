@@ -1,0 +1,38 @@
+{
+  "updated_at": "2026-10-20 00:00:00",
+  "account_macro": {
+    "cumulate_user": "1,000+",
+    "yesterday_read": "2,000+",
+    "yesterday_share": "300+",
+    "yesterday_follow": "50+",
+    "weekly_rec": "1.0万+"
+  },
+  "empirical_rules": {
+    "private_base_reads_range": [100, 150],
+    "rec_breakout_target_reads": 2000,
+    "min_share_rate_threshold": 12.0,
+    "rec_ratio_breakout_threshold": 60.0,
+    "core_insights": [
+      "常读私域底盘为 100~150 阅，未进入公域推荐前严禁预期过高",
+      "微信算法前2小时初筛，若初始分享率 < 15% 或受众过窄，推荐流会迅速熔断",
+      "爆款标配：全民级痛点 + 极具冲突性的大字封面 + 前200字给方案"
+    ]
+  },
+  "top_performing_articles": [
+    {
+      "title": "示例：旧iPad别扔，2.2万星开源神作，扫码秒变副屏！",
+      "read_num": 4082,
+      "rec_ratio": 85.9,
+      "share_rate": 11.9,
+      "date": "2026-10-19"
+    }
+  ],
+  "recent_melted_topics": [
+    {
+      "title": "示例：小众极客工具/纯代码库分析",
+      "read_num": 120,
+      "rec_ratio": 2.5,
+      "date": "2026-10-16"
+    }
+  ]
+}

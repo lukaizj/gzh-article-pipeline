@@ -188,26 +188,14 @@ def outro_follow_card(author="奇点造物所", tagline="深度拆解前沿 AI �
   <p style="margin:0;font-size:12px;line-height:1.8;color:#65675e;"><span leaf="">{tagline}</span></p>
 </section>'''
 
-def lead_magnet_card(keyword, title, items, subtitle="🎁 读者专属福利 · 免配置一键自取"):
+def lead_magnet_card(*args, **kwargs):
     """
-    高转化涨粉诱饵卡片 (Lead Magnet Card)
-    引导读者关注公众号并发送指定关键词获取整合包/脚本/备忘录，打破只看不粉的僵局！
+    【已全面废弃并禁用 - 严禁使用】
+    根据号主铁律与顶级工程红线第 8 条，彻底杜绝“后台回复暗号/读者福利领取”等套路化引流卡片。
+    技术内刊必须坦荡零套路全盘交付干货。
+    本函数直接抛出异常，防止任何后续文章误用。
     """
-    items_html = "".join([f'<li style="margin-bottom:6px;font-size:13px;line-height:1.6;color:#3b3d36;"><span leaf="">• {it}</span></li>' for it in items])
-    return f'''<section style="margin-top:32px;padding:22px 20px;background:#fdfdf8;border:2px solid #16a085;border-radius:10px;box-shadow:4px 4px 0px #16a085;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,sans-serif;">
-  <section style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-    <span style="font-size:12px;font-weight:800;color:#16a085;letter-spacing:1px;background:#e8f8f5;padding:4px 10px;border-radius:4px;border:1px solid #16a085;"><span leaf="">{subtitle}</span></span>
-    <span style="font-size:11px;color:#87897e;font-weight:600;"><span leaf="">限时无套路直取</span></span>
-  </section>
-  <h3 style="margin:0 0 10px;font-size:16px;font-weight:800;color:#23251d;"><span leaf="">{title}</span></h3>
-  <ul style="margin:0 0 16px;padding-left:18px;list-style-type:none;">
-    {items_html}
-  </ul>
-  <section style="background:#e8f8f5;border:1.5px dashed #16a085;padding:12px 14px;border-radius:6px;text-align:center;">
-    <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#23251d;"><span leaf="">👇 获取方式（免百度网盘限速）：</span></p>
-    <p style="margin:0;font-size:13px;line-height:1.7;color:#16a085;"><span leaf="">关注微信公众号【奇点造物所】，后台对话框回复「</span><strong style="color:#c0392b;font-size:15px;"><span leaf="">{keyword}</span></strong><span leaf="">」即可秒级自取！</span></p>
-  </section>
-</section>'''
+    raise RuntimeError("【严格红线禁止】文章严禁使用 lead_magnet_card 或任何后台回复暗号卡片！请直接在正文与 github_portal_card 中全盘坦荡交付开源地址与干货！")
 
 def interactive_cta_card(question, sub_tip="精选留言将置顶展示，欢迎交流踩坑心得！"):
     """

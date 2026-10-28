@@ -1,19 +1,19 @@
 {
-  "updated_at": "2026-10-20 11:43:26",
+  "updated_at": "2026-10-28 09:43:14",
   "account_macro": {
-    "cumulate_user": "1,577",
-    "yesterday_read": "3,578",
-    "yesterday_share": "527",
-    "yesterday_follow": "67",
-    "weekly_rec": "1.5万"
+    "cumulate_user": "2,051",
+    "yesterday_read": "8,805",
+    "yesterday_share": "1,103",
+    "yesterday_follow": "99",
+    "weekly_rec": "2.6万"
   },
   "empirical_rules": {
     "private_base_reads_range": [
-      105,
-      157
+      134,
+      201
     ],
-    "rec_breakout_target_reads": 4082,
-    "min_share_rate_threshold": 11.9,
+    "rec_breakout_target_reads": 7951,
+    "min_share_rate_threshold": 15.0,
     "rec_ratio_breakout_threshold": 60.0,
     "core_insights": [
       "常读私域底盘为 100~150 阅，未进入公域推荐前严禁预期过高",
@@ -24,88 +24,88 @@
   "top_performing_articles": [
     {
       "title": "夯爆！旧iPad别扔，2.2万星开源神作，扫码秒变副屏！",
-      "read_num": 4082,
-      "rec_ratio": 85.9,
-      "share_rate": 11.9,
+      "read_num": 17754,
+      "rec_ratio": 94.4,
+      "share_rate": 10.3,
       "date": "2026-10-19"
     },
     {
-      "title": "Windows卸载骗了你20年！这款开源神作，才叫连根拔起",
-      "read_num": 603,
-      "rec_ratio": 65.5,
-      "share_rate": 20.9,
-      "date": "2026-10-14"
+      "title": "微信占100G不敢删？开源神作：一键导出做成电子书！",
+      "read_num": 10331,
+      "rec_ratio": 93.0,
+      "share_rate": 12.7,
+      "date": "2026-10-27"
     },
     {
-      "title": "10G大片0.1秒秒切！这款开源神作，把剪映秒了",
-      "read_num": 186,
-      "rec_ratio": 17.9,
-      "share_rate": 17.7,
-      "date": "2026-10-15"
+      "title": "连百度网盘都能加速？实测调速黑科技：几十KB瞬间拉满",
+      "read_num": 2592,
+      "rec_ratio": 85.1,
+      "share_rate": 11.9,
+      "date": "2026-10-20"
+    },
+    {
+      "title": "下几十兆文件非要装客户端？教你网页提取直链：满速直下",
+      "read_num": 1128,
+      "rec_ratio": 74.1,
+      "share_rate": 25.0,
+      "date": "2026-10-25"
     },
     {
       "title": "刚聊完天就推广告？1.3万星开源神作，偷听内鬼一键拉闸！",
-      "read_num": 182,
-      "rec_ratio": 5.9,
-      "share_rate": 16.5,
+      "read_num": 267,
+      "rec_ratio": 18.4,
+      "share_rate": 17.6,
       "date": "2026-10-18"
-    },
-    {
-      "title": "用小工具总被逼留手机号？国外极客开源反杀：200+免注册神器点开即用！",
-      "read_num": 158,
-      "rec_ratio": 0.6,
-      "share_rate": 12.7,
-      "date": "2026-10-13"
     }
   ],
   "recent_melted_topics": [
     {
-      "title": "连百度网盘都能加速？实测调速黑科技：几十KB瞬间拉满",
-      "read_num": 155,
+      "title": "别让AI单打独斗了！8万星神作：一键召唤智能体军团！",
+      "read_num": 73,
       "rec_ratio": 0.0,
-      "date": "2026-10-20"
+      "date": "2026-10-28"
     },
     {
-      "title": "刚聊完天就推广告？1.3万星开源神作，偷听内鬼一键拉闸！",
-      "read_num": 182,
-      "rec_ratio": 5.9,
-      "date": "2026-10-18"
+      "title": "喂AI全是乱码？3.5万星开源神作，公式表格1秒转MD！",
+      "read_num": 117,
+      "rec_ratio": 0.9,
+      "date": "2026-10-26"
+    },
+    {
+      "title": "别再给PS交年费了！这套轻量免费替代：修图剪辑秒开",
+      "read_num": 93,
+      "rec_ratio": 0.0,
+      "date": "2026-10-24"
+    },
+    {
+      "title": "旧手机别扔！2.6万星开源神作：扫码秒变私",
+      "read_num": 244,
+      "rec_ratio": 86.2,
+      "date": "2026-10-23"
+    },
+    {
+      "title": "转个格式动辄充会员？这个离线小工具：鼠标一拖瞬间秒转",
+      "read_num": 97,
+      "rec_ratio": 20.4,
+      "date": "2026-10-22"
+    },
+    {
+      "title": "Anthropic工程主管万字长文：拉开AI认知代差",
+      "read_num": 111,
+      "rec_ratio": 31.5,
+      "date": "2026-10-21"
     },
     {
       "title": "改字盖章卡300KB？2款免安装神器，彻底终结逼氪！",
-      "read_num": 134,
-      "rec_ratio": 7.0,
+      "read_num": 165,
+      "rec_ratio": 5.5,
       "date": "2026-10-17"
     },
     {
       "title": "我靠！1个网名扒穿全网小号，6.3万星开源神作牛到飞起！",
-      "read_num": 125,
-      "rec_ratio": 2.9,
+      "read_num": 204,
+      "rec_ratio": 16.2,
       "date": "2026-10-16"
-    },
-    {
-      "title": "10G大片0.1秒秒切！这款开源神作，把剪映秒了",
-      "read_num": 186,
-      "rec_ratio": 17.9,
-      "date": "2026-10-15"
-    },
-    {
-      "title": "受够了听歌到处要VIP？这款开源神作，连周",
-      "read_num": 2,
-      "rec_ratio": 0.0,
-      "date": "2026-10-15"
-    },
-    {
-      "title": "受够了听歌到处要VIP？这款开源神作，连周杰伦都能听",
-      "read_num": 105,
-      "rec_ratio": 2.7,
-      "date": "2026-10-15"
-    },
-    {
-      "title": "用小工具总被逼留手机号？国外极客开源反杀：200+免注册神器点开即用！",
-      "read_num": 158,
-      "rec_ratio": 0.6,
-      "date": "2026-10-13"
     }
   ]
 }

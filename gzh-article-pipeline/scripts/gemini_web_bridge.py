@@ -104,7 +104,14 @@ def generate_image_via_gemini_web(prompt, output_file_path, timeout=120):
     existing_srcs = set(json.loads(existing_json) if ok and existing_json else [])
 
     # 2. 注入提示词（必须去除换行符，因为 Chromium execCommand insertText 会在第一个换行符截断）
-    print(f"2. 正在自动输入生图提示词...")
+    print(f"2. 正在等待富文本编辑器就绪...")
+    for _ in range(20):
+        ok, res = execute_js(win_idx, tab_idx, 'document.querySelector("rich-textarea div.ql-editor") !== null')
+        if ok and res == 'true':
+            break
+        time.sleep(0.5)
+
+    print(f"   -> 正在自动输入生图提示词...")
     prompt_clean = " ".join(line.strip() for line in prompt.strip().splitlines() if line.strip())
     b64_prompt = base64.b64encode(prompt_clean.encode("utf-8")).decode("ascii")
     insert_js = f"""

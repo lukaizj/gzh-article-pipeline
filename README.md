@@ -19,6 +19,12 @@
 </p>
 
 <p align="center">
+  <img src="assets/demo-pipeline.gif" alt="GZH Article Pipeline Demo" width="100%" style="border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+  <br>
+  <sub>⚡ <b>实机极速闭环演示</b>：输入目标链接 ➔ 动态死刑复核与痛点提炼 ➔ 并行生成 4 张火柴人图（2.35:1 居中防切字校验） ➔ 纯内联排版直推微信官方草稿箱（4.8s 极速交付）</sub>
+</p>
+
+<p align="center">
   <a href="#痛点与解决方案-overview">核心价值</a> •
   <a href="#核心工作流双核自运转闭环架构-autonomous-closed-loop-architecture">架构全景</a> •
   <a href="#视觉设计体系-design-system">视觉体系</a> •

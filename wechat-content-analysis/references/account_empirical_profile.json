@@ -1,111 +1,121 @@
 {
-  "updated_at": "2026-10-28 09:43:14",
+  "updated_at": "2026-11-17 09:32:10",
   "account_macro": {
-    "cumulate_user": "2,051",
-    "yesterday_read": "8,805",
-    "yesterday_share": "1,103",
-    "yesterday_follow": "99",
-    "weekly_rec": "2.6万"
+    "cumulate_user": "2,818",
+    "yesterday_read": "2,390",
+    "yesterday_share": "323",
+    "yesterday_follow": "41",
+    "weekly_rec": null
   },
   "empirical_rules": {
     "private_base_reads_range": [
-      134,
-      201
+      81,
+      122
     ],
-    "rec_breakout_target_reads": 7951,
-    "min_share_rate_threshold": 15.0,
+    "rec_breakout_target_reads": 5755,
+    "min_share_rate_threshold": 14.6,
     "rec_ratio_breakout_threshold": 60.0,
     "core_insights": [
-      "常读私域底盘为 100~150 阅，未进入公域推荐前严禁预期过高",
-      "微信算法前2小时初筛，若初始分享率 < 15% 或受众过窄，推荐流会迅速熔断",
-      "爆款标配：全民级痛点 + 极具冲突性的大字封面 + 前200字给方案"
+      "【三道递进闸门定律】: 算法按第1关公域CTR ➔ 第2关完读率 ➔ 第3关分享率严格顺序过关。26%高分享率若死在第1关门槛词，公域流直接熔断",
+      "【圈层自嗨陷阱】: 极客高分享多为收藏式转发，若正文篇幅>2000字拖垮完读率，算法判定为枯燥沉重并终止推流",
+      "【严格字数控制】: 正文纯文本必须严格控制在 1000~1300 字（保 40%+ 完读率），避免长文跳出",
+      "【消灭认知阻力词】: 标题与封面严禁出现‘路由器/改代码/DNS/配置’，必须用‘插上U盘/扫码秒推/即开即用’零阻力动词",
+      "【封面防脱敏与安全视窗】: 严禁连续使用千篇一律模板色；视窗内容高度<=525px居中y=[121, 646]，保留30px双向防裁切留白"
     ]
   },
   "top_performing_articles": [
     {
       "title": "夯爆！旧iPad别扔，2.2万星开源神作，扫码秒变副屏！",
-      "read_num": 17754,
-      "rec_ratio": 94.4,
-      "share_rate": 10.3,
+      "read_num": 22898,
+      "rec_ratio": 0.0,
+      "share_rate": 10.6,
       "date": "2026-10-19"
     },
     {
       "title": "微信占100G不敢删？开源神作：一键导出做成电子书！",
-      "read_num": 10331,
-      "rec_ratio": 93.0,
-      "share_rate": 12.7,
+      "read_num": 22288,
+      "rec_ratio": 92.6,
+      "share_rate": 12.8,
       "date": "2026-10-27"
     },
     {
-      "title": "连百度网盘都能加速？实测调速黑科技：几十KB瞬间拉满",
-      "read_num": 2592,
-      "rec_ratio": 85.1,
-      "share_rate": 11.9,
-      "date": "2026-10-20"
+      "title": "别再花钱查陌生人底细了！GitHub开源神作：一键扒透骚扰电话、可疑IP与全网社交足迹，手机电脑都能跑！",
+      "read_num": 20548,
+      "rec_ratio": 0.0,
+      "share_rate": 9.4,
+      "date": "2026-10-09"
     },
     {
-      "title": "下几十兆文件非要装客户端？教你网页提取直链：满速直下",
-      "read_num": 1128,
-      "rec_ratio": 74.1,
-      "share_rate": 25.0,
-      "date": "2026-10-25"
+      "title": "全网视频随便下！11万星开源神器杀疯了，全平台4K高清直接拉满！",
+      "read_num": 16446,
+      "rec_ratio": 0.0,
+      "share_rate": 11.6,
+      "date": "2026-09-24"
     },
     {
-      "title": "刚聊完天就推广告？1.3万星开源神作，偷听内鬼一键拉闸！",
-      "read_num": 267,
-      "rec_ratio": 18.4,
-      "share_rate": 17.6,
-      "date": "2026-10-18"
+      "title": "被限速弹窗恶心吐了？GitHub近万星开源神作：全网视频/BT一键下载，完全免费！",
+      "read_num": 14524,
+      "rec_ratio": 0.0,
+      "share_rate": 17.4,
+      "date": "2026-10-10"
     }
   ],
   "recent_melted_topics": [
     {
-      "title": "别让AI单打独斗了！8万星神作：一键召唤智能体军团！",
-      "read_num": 73,
+      "title": "别乱点陌生链接！3.5万星神作：免安装1秒扒透底细！",
+      "read_num": 78,
+      "share_rate": 11.5,
       "rec_ratio": 0.0,
-      "date": "2026-10-28"
+      "date": "2026-11-17"
     },
     {
-      "title": "喂AI全是乱码？3.5万星开源神作，公式表格1秒转MD！",
+      "title": "4S店消故障码收两百？十几块小插头，手机自己搞定",
+      "read_num": 213,
+      "share_rate": 14.6,
+      "rec_ratio": 51.2,
+      "date": "2026-11-16"
+    },
+    {
+      "title": "嫌手机刷短剧太费眼？开源神作：电脑大屏高清畅看",
+      "read_num": 173,
+      "share_rate": 15.0,
+      "rec_ratio": 18.0,
+      "date": "2026-11-15"
+    },
+    {
+      "title": "电视桌面全是广告？1.1万星神作：一键换回干净大屏！",
+      "read_num": 96,
+      "share_rate": 17.7,
+      "rec_ratio": 2.0,
+      "date": "2026-11-14"
+    },
+    {
+      "title": "别被看盘软件割韭菜！开源AI神作：一键排雷+微信盯盘",
+      "read_num": 168,
+      "share_rate": 21.4,
+      "rec_ratio": 4.4,
+      "date": "2026-11-11"
+    },
+    {
+      "title": "倪海厦天纪紫微斗数，被做成了1.7万星开源排盘神器！",
+      "read_num": 225,
+      "share_rate": 23.6,
+      "rec_ratio": 2.9,
+      "date": "2026-11-10"
+    },
+    {
+      "title": "看国外视频最怕劣质机翻！这个工具一键搞定双语字幕",
       "read_num": 117,
-      "rec_ratio": 0.9,
-      "date": "2026-10-26"
+      "share_rate": 20.5,
+      "rec_ratio": 13.6,
+      "date": "2026-11-09"
     },
     {
-      "title": "别再给PS交年费了！这套轻量免费替代：修图剪辑秒开",
-      "read_num": 93,
+      "title": "家里有小孩的，记得提醒使用豆包千问时，最后一句不要抄到作业里啦",
+      "read_num": 22,
+      "share_rate": 4.5,
       "rec_ratio": 0.0,
-      "date": "2026-10-24"
-    },
-    {
-      "title": "旧手机别扔！2.6万星开源神作：扫码秒变私",
-      "read_num": 244,
-      "rec_ratio": 86.2,
-      "date": "2026-10-23"
-    },
-    {
-      "title": "转个格式动辄充会员？这个离线小工具：鼠标一拖瞬间秒转",
-      "read_num": 97,
-      "rec_ratio": 20.4,
-      "date": "2026-10-22"
-    },
-    {
-      "title": "Anthropic工程主管万字长文：拉开AI认知代差",
-      "read_num": 111,
-      "rec_ratio": 31.5,
-      "date": "2026-10-21"
-    },
-    {
-      "title": "改字盖章卡300KB？2款免安装神器，彻底终结逼氪！",
-      "read_num": 165,
-      "rec_ratio": 5.5,
-      "date": "2026-10-17"
-    },
-    {
-      "title": "我靠！1个网名扒穿全网小号，6.3万星开源神作牛到飞起！",
-      "read_num": 204,
-      "rec_ratio": 16.2,
-      "date": "2026-10-16"
+      "date": "2026-11-05"
     }
   ]
 }

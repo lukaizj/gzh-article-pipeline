@@ -179,14 +179,55 @@ def github_portal_card(github_url, online_mirror=None, stars="100,000+", forks="
   <p style="margin:12px 0 0;font-size:11px;color:#9ea096;"><span leaf="">⭐ {stars} Stars · 🍴 {forks} Forks · 👥 {maintainers} 维护者</span></p>
 </section>'''
 
-def outro_follow_card(author="奇点造物所", tagline="深度拆解前沿 AI 智能体技术与开源前沿神作，让技术为每一个人所用。<br>如果觉得本文有启发，欢迎点赞、在看、转发与评论！"):
+DEFAULT_MP_PROFILE = {
+    "biz_id": "MzY4NzMyNzUzNg==",
+    "nickname": "奇点造物所",
+    "headimg": "http://mmbiz.qpic.cn/sz_mmbiz_png/zO3RVuZnibkbWO0v0YMTJhauOaYFMDSVyPn9ZmLDbj7AGFdnTEthOumdE1Aj7aqOBj2D9UumymIaVSFTQWBnCK9LcbVbWic1Ub6ljhvPEwj60/0?wx_fmt=png",
+    "signature": "大数据运维老兵的数字工具箱。用工程视角，带你淘好用的 AI 与生产力黑科技。关注我，少交智商税。",
+}
+
+def mp_profile_card(
+    biz_id=DEFAULT_MP_PROFILE["biz_id"],
+    nickname=DEFAULT_MP_PROFILE["nickname"],
+    headimg=DEFAULT_MP_PROFILE["headimg"],
+    signature=DEFAULT_MP_PROFILE["signature"],
+):
     """
-    底部关注与互动卡片
+    微信官方原生公众号名片 (<mp-common-profile>)
+    固定置于文章最底部，读者可直接点击卡片关注公众号。
     """
-    return f'''<section style="margin-top:28px;padding:18px 20px;background:#f7f8f4;border-radius:8px;border:1px solid #bfc1b7;text-align:center;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,sans-serif;">
+    return (
+        f'<section style="margin-top:24px;" nodeleaf="">'
+        f'<mp-common-profile class="js_uneditable custom_select_card mp_profile_iframe" '
+        f'data-pluginname="mpprofile" '
+        f'data-nickname="{nickname}" '
+        f'data-index="0" '
+        f'data-from="2" '
+        f'data-headimg="{headimg}" '
+        f'data-signature="{signature}" '
+        f'data-id="{biz_id}" '
+        f'data-is_biz_ban="0" '
+        f'data-origin_num="0" '
+        f'data-biz_account_status="0">'
+        f'</mp-common-profile>'
+        f'</section>'
+    )
+
+def outro_follow_card(
+    author="奇点造物所",
+    tagline="深度拆解前沿 AI 智能体技术与开源前沿神作，让技术为每一个人所用。<br>如果觉得本文有启发，欢迎点赞、在看、转发与评论！",
+    include_mp_profile=True,
+):
+    """
+    底部关注与互动卡片（默认同步附带微信官方公众号名片）
+    """
+    follow_box = f'''<section style="margin-top:28px;padding:18px 20px;background:#f7f8f4;border-radius:8px;border:1px solid #bfc1b7;text-align:center;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,sans-serif;">
   <p style="margin:0 0 6px;font-size:14px;font-weight:800;color:#23251d;"><span leaf="">欢迎关注「{author}」</span></p>
   <p style="margin:0;font-size:12px;line-height:1.8;color:#65675e;"><span leaf="">{tagline}</span></p>
 </section>'''
+    if include_mp_profile:
+        return follow_box + "\n" + mp_profile_card(nickname=author)
+    return follow_box
 
 def lead_magnet_card(*args, **kwargs):
     """
@@ -199,17 +240,10 @@ def lead_magnet_card(*args, **kwargs):
 
 def interactive_cta_card(question, sub_tip="精选留言将置顶展示，欢迎交流踩坑心得！"):
     """
-    评论区盖楼卡片 (Interactive CTA Card)
-    通过引发情绪共鸣或站队话题，提升留言率和算法热度
+    【严格禁用】评论区盖楼引导卡片 (Interactive CTA Card)
+    用户明确要求文末不写任何评论区/留言区提问引导内容，保留签名仅作硬熔断防误用。
     """
-    return f'''<section style="margin-top:28px;padding:18px 20px;background:#fefbf3;border:1.5px solid #d4a373;border-radius:8px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,sans-serif;">
-  <section style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-    <span style="font-size:18px;"><span leaf="">💬</span></span>
-    <p style="margin:0;font-size:14px;font-weight:800;color:#936639;"><span leaf="">留言区互动话题</span></p>
-  </section>
-  <p style="margin:0 0 8px;font-size:13px;line-height:1.7;font-weight:700;color:#23251d;"><span leaf="">{question}</span></p>
-  <p style="margin:0;font-size:11px;color:#a68a68;"><span leaf="">{sub_tip}</span></p>
-</section>'''
+    raise RuntimeError("【严格红线禁止】文章文末严禁出现任何评论区/留言区互动提问引导块（interactive_cta_card 或同类段落）！")
 
 def section_title_editorial(title, sub=None, num=None):
     """

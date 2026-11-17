@@ -208,11 +208,30 @@ def ensure_safe_crop_cover(cover_path):
         
     return cover_path
 
+def ensure_mp_profile_card(content):
+    """确保正文末尾包含微信官方互动公众号名片 (<mp-common-profile>)，幂等不重复。"""
+    if "mp-common-profile" in content:
+        return content
+
+    ref_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "references"))
+    if ref_dir not in sys.path:
+        sys.path.insert(0, ref_dir)
+    from olive_journal_template import mp_profile_card
+
+    profile_cfg = CFG.get("mp_profile", {})
+    card_html = mp_profile_card(**profile_cfg) if profile_cfg else mp_profile_card()
+    trailing_re = re.compile(r'(<p[^>]*display:\s*none[^>]*>\s*<mp-style-type[^>]*></mp-style-type>\s*</p>\s*)$', re.I)
+    if trailing_re.search(content):
+        return trailing_re.sub(card_html + r"\1", content, count=1)
+    return content + "\n" + card_html
+
 def main():
     parser = argparse.ArgumentParser(description="一键上传文章及素材至微信公众号草稿箱")
     parser.add_argument("--html", required=True, help="排版好的正文 HTML 文件路径")
     parser.add_argument("--images-dir", help="图片存储目录（可选）")
     parser.add_argument("--cover", help="封面图文件路径（默认使用找到的第一张图片）")
+    parser.add_argument("--no-safe-crop", action="store_true", help="禁用 2.35:1 强制居中安全裁切缩小（保留原图满版画幅，与往期统一视觉比例）")
+    parser.add_argument("--no-profile-card", action="store_true", help="禁用自动在文末兜底插入公众号名片卡片")
     parser.add_argument("--title", help="文章标题（默认从 HTML 提取）")
     parser.add_argument("--author", default=DEFAULT_AUTHOR, help="文章作者")
     parser.add_argument("--digest", help="文章摘要（不超过 120 字）")
@@ -258,7 +277,8 @@ def main():
             print("错误: 未找到可用的封面图片", file=sys.stderr)
             sys.exit(1)
 
-        cover_path = ensure_safe_crop_cover(cover_path)
+        if not args.no_safe_crop:
+            cover_path = ensure_safe_crop_cover(cover_path)
         print(f"2. 正在上传封面素材: {os.path.basename(cover_path)} ...")
         thumb_media_id = upload_thumb_material(token, cover_path)
         print(f"✓ 封面图上传成功! thumb_media_id: {thumb_media_id}")
@@ -273,6 +293,12 @@ def main():
 
     title = args.title or "微信公众号精选推文"
     digest = args.digest or "点击查看精彩深度推文与系统性实操拆解。"
+
+    if not args.no_profile_card:
+        before_has = "mp-common-profile" in content
+        content = ensure_mp_profile_card(content)
+        if not before_has and "mp-common-profile" in content:
+            print("✓ 已自动在文末附加「奇点造物所」微信官方公众号名片 (<mp-common-profile>)")
 
     if len(title) > 26:
         print(f"\n⚠️  [标题预警] 当前标题共 {len(title)} 个字符，超过 26 字符上限！")

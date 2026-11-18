@@ -58,11 +58,11 @@
 
 ![核心工作流：双轨驱动架构](assets/workflow-architecture.jpg)
 
-| 调度指挥家 (编排思想) | 四步时序排障 (方法论) |
+| 实证选品与 100 分标题门禁 | 21:9 封面与 429 自动容灾 |
 | :---: | :---: |
-| <img src="assets/01-agent-orchestration.jpg" width="100%" alt="调度指挥家" style="border-radius: 6px;" /> | <img src="assets/02-four-step-diagnosis.jpg" width="100%" alt="四步时序排障" style="border-radius: 6px;" /> |
-| **证据链拼图 (排障质感)** | **六层控制塔 (系统架构)** |
-| <img src="assets/03-evidence-chain.jpg" width="100%" alt="证据链拼图" style="border-radius: 6px;" /> | <img src="assets/04-six-layer-architecture.jpg" width="100%" alt="六层控制塔" style="border-radius: 6px;" /> |
+| <img src="assets/01-topic-gate.jpg" width="100%" alt="实证选品与100分标题门禁" style="border-radius: 6px;" /> | <img src="assets/02-visual-429.jpg" width="100%" alt="21:9封面与429自动容灾" style="border-radius: 6px;" /> |
+| **短节奏排版与 9 项自动质检** | **免密钥直连后台复盘飞轮** |
+| <img src="assets/03-quality-validator.jpg" width="100%" alt="短节奏排版与9项自动质检" style="border-radius: 6px;" /> | <img src="assets/04-closed-loop-review.jpg" width="100%" alt="免密钥直连后台复盘飞轮" style="border-radius: 6px;" /> |
 
 ---
 

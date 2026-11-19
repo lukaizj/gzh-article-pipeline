@@ -364,6 +364,7 @@ def run_validation(path: Path, title: str, min_cjk: int, max_cjk: int) -> Dict:
     })
 
     # 8. Opening-3-paragraphs & HTML structural rules
+    first3_text = " ".join(paragraphs[:3])
     first3_cjk = sum(count_cjk(x) for x in paragraphs[:3])
     struct_fails = []
     struct_warns = []
@@ -376,7 +377,9 @@ def run_validation(path: Path, title: str, min_cjk: int, max_cjk: int) -> Dict:
         if not parsed["has_mp_profile"]:
             struct_warns.append("正文末尾未检测到 <mp-common-profile> 公众号名片（推送脚本可自动补全）")
     if first3_cjk > 190:
-        struct_warns.append(f"前三段总字数 {first3_cjk} 字偏长，注意严格落实『前三句直接给结论』")
+        struct_warns.append(f"前三段总字数 {first3_cjk} 字偏长，建议控制在 190 字内只做痛点与悬念钩子")
+    if re.search(r"https?://|github\.com", first3_text, re.I):
+        struct_warns.append("前 3 段直接暴露网址或仓库链接，易致读者收藏即退出拉低完读率（请移至中后段/传送门）")
     if parsed["table_count"] > 2:
         struct_warns.append(f"表格数量为 {parsed['table_count']} 张，建议控制在 1~2 张以内")
     st_status = "fail" if struct_fails else ("warning" if struct_warns else "pass")

@@ -14,86 +14,86 @@
 </p>
 
 <p align="center">
-  <b>微信公众号全自动生产、质检与数据复盘闭环流水线</b><br>
-  <span>选题规划 → 内容驱动封面生图 → 1000字高完读撰写 → 9项自动质检 → 一键推草稿箱 → 后台推荐流复盘校准</span>
+  <b>微信公众号创作、离线质检与后台复盘工具链</b><br>
+  <span>从公众号「奇点造物所」近 180 篇后台数据打磨出的实战工作流，适配 Codex / Antigravity 直接调用。</span>
 </p>
 
 <p align="center">
-  <a href="#核心功能亮点-highlights">核心亮点</a> •
-  <a href="#视觉与闭环架构-architecture">架构视觉</a> •
-  <a href="#快速上手-quick-start">快速上手</a> •
-  <a href="#安装与配置-installation">安装配置</a> •
-  <a href="#隐私安全与支持-contact">支持与定制</a>
+  <a href="#功能说明-features">功能说明</a> •
+  <a href="#工作流程-architecture">工作流程</a> •
+  <a href="#快速使用-quick-start">快速使用</a> •
+  <a href="#安装配置-installation">安装配置</a> •
+  <a href="#交流与支持-contact">交流支持</a>
 </p>
 
-> [!TIP]
-> 💡 **觉得省时好用，欢迎点亮右上角 ⭐️ [Star](https://github.com/lukaizj/gzh-article-pipeline) 支持！这是持续迭代维护的最大动力。**
+> [!NOTE]
+> 如果这套工作流对你的公众号日常产出有帮助，欢迎在右上角点个 [Star](https://github.com/lukaizj/gzh-article-pipeline) 支持后续更新。
 
 ---
 
-## 核心功能亮点 (Highlights)
+## 功能说明 (Features)
 
-告别长篇大论、样式被微信吞掉、发完不知道为什么没流量的传统 AI 写作套路，流水线用**实证后台数据 + 工程化硬卡扣**跑通全流程：
+针对公众号日常更新里「选题没谱、粘进后台掉样式、生图限流卡壳、发完看不懂推荐流数据」四个实际问题，用本地脚本和约束规则串起整条链路：
 
-| 核心模块 | 解决什么痛点 | 硬核机制与能力 |
+| 模块 | 解决的问题 | 实现方式 |
 | :--- | :--- | :--- |
-| **🎯 实证选品与标题门槛** | 选题全靠拍脑袋，写完没人点进门 | • **5 步存活性死刑复核**：核查源码、最近提交与 Release 包，拒绝推荐已失效僵尸项目<br>• **4 维差异化定位 + 标题 100 分打分**：`<= 26` 字禁绝极客黑话，`< 75 分` 自动打回重写 |
-| **✍️ 高完读短节奏与 9 项质检** | 开头废话多、段落像砖头、满篇 AI 腔 | • **1000～1300 字精炼流**：前三句直接给结论，手机端 2～3 行短段、每功能必译为人话收益<br>• **`validate_article.py` 离线质检**：自动扫描黑话、段长、图文密度、词边界违禁词与 `<span leaf="">` 完整性 |
-| **🎨 吸睛 `21:9` 封面与 429 容灾** | 灰底素图没人点，API 限流就中断 | • **内容驱动全画幅实景封面**：高饱和撞色 + 单行 7～9 字发光主标题，`--no-safe-crop` 满版直传不切字<br>• **双引擎生图零中断**：API 遇 `429` 配额耗尽，秒级无缝切 Chrome Gemini Web Pro 自动接管 |
-| **🚀 零清洗排版与草稿箱直推** | 微信后台吞 CSS、反复改稿版式乱 | • **0 单引号纯内联引擎（橄榄手记）**：兼容图文大表与警示卡，自动植入文末官方公众号名片<br>• **`upload_to_wechat.py` 一键推**：支持直接新建或 `--update-draft` 原地覆盖更新已有草稿 |
-| **📊 后台推荐流复盘飞轮** | 不知道文章卡在 CTR 还是完读率 | • **`pull_and_analyze_mp.py` 免密钥直连**：复用 Chrome 后台会话，3 秒拉全篇**完读率 + 推荐流占比 + 粉丝打开率**，自动回写 `account_empirical_profile.json` 指导下一篇选题 |
+| **选品与标题评分** | 推荐已停更的僵尸项目，或标题带专业术语导致点击率过低 | • 先核查仓库近况、提交记录与正式安装包，确认可用再写<br>• 按受众匹配度、点击钩子与长度（`<= 26` 字）百分制打分，低于 `75` 分自动重写 |
+| **短节奏正文与 9 项质检** | 开头直接剧透工具名、长段落挤在手机上看不下去、AI 套话多 | • 正文锁定 `950~1300` 纯汉字，前三句只抛痛点悬念（01 节再揭晓工具名），手机端控制 2~3 行短段<br>• `validate_article.py` 离线扫描段长、套话、词边界违禁词与 `<span leaf="">` 结构完整性 |
+| **`21:9` 封面与 429 容灾** | 封面在信息流里对比度太弱；生图 API 限流直接中断流程 | • 生成高对比内容主题 `21:9` 封面，支持 `--no-safe-crop` 满版直传<br>• `generate_image_unified.py` 遇 `429` 配额报错时，自动调用 `gemini_web_bridge.py` 接管 Chrome 网页版继续出图 |
+| **内联排版与草稿直推** | 微信编辑器吞外链 CSS；重改稿件时覆盖已添加的商品卡 | • `olive_journal_template.py` 全纯内联 HTML 组件输出，自动注入公众号关注名片<br>• `upload_to_wechat.py` 自动传图至微信 CDN，支持新建草稿或 `--update-draft` 原地覆盖更新 |
+| **后台数据拉取与复盘** | 发完只看总阅读，搞不清卡在点开率还是完读率 | • `pull_and_analyze_mp.py` 复用本机 Chrome 登录会话拉取单篇完读率与推荐渠道分布<br>• 自动将近期规律写回 `account_empirical_profile.json`，供下一篇选题参考 |
 
 ---
 
-## 视觉与闭环架构 (Architecture)
+## 工作流程 (Architecture)
 
 ```text
-[模式 A: 自动选题 / 模式 B: 链接直写]
+[自动挖题 / 给定链接]
        │
        ▼
-[封面与插图生成 (API/Web 双引擎)] ➔ [1000字短段排版 + validate_article 9项质检] ➔ [upload_to_wechat 推草稿箱]
+[封面与配图 (API + 429网页接管)] ➔ [千字短段排版 + validate_article 9项质检] ➔ [upload_to_wechat 推草稿箱]
        ▲                                                                                     │
-       └────── [经验画像库 account_empirical_profile.json] ◄── [pull_and_analyze_mp 后台全渠道复盘] ◄─┘
+       └────── [经验库 account_empirical_profile.json] ◄── [pull_and_analyze_mp 后台渠道复盘] ◄─┘
 ```
 
-![核心工作流：双轨驱动架构](assets/workflow-architecture.jpg)
+![工作流总览](assets/workflow-architecture.jpg)
 
-| 实证选品与 100 分标题门禁 | 21:9 封面与 429 自动容灾 |
+| 选品核验与标题评分 | `21:9` 封面与 `429` 容灾 |
 | :---: | :---: |
-| <img src="assets/01-topic-gate.jpg" width="100%" alt="实证选品与100分标题门禁" style="border-radius: 6px;" /> | <img src="assets/02-visual-429.jpg" width="100%" alt="21:9封面与429自动容灾" style="border-radius: 6px;" /> |
-| **短节奏排版与 9 项自动质检** | **免密钥直连后台复盘飞轮** |
-| <img src="assets/03-quality-validator.jpg" width="100%" alt="短节奏排版与9项自动质检" style="border-radius: 6px;" /> | <img src="assets/04-closed-loop-review.jpg" width="100%" alt="免密钥直连后台复盘飞轮" style="border-radius: 6px;" /> |
+| <img src="assets/01-topic-gate.jpg" width="100%" alt="选品核验与标题评分" style="border-radius: 6px;" /> | <img src="assets/02-visual-429.jpg" width="100%" alt="21:9封面与429容灾" style="border-radius: 6px;" /> |
+| **短段排版与 9 项离线质检** | **本机直连后台数据复盘** |
+| <img src="assets/03-quality-validator.jpg" width="100%" alt="短段排版与9项离线质检" style="border-radius: 6px;" /> | <img src="assets/04-closed-loop-review.jpg" width="100%" alt="本机直连后台数据复盘" style="border-radius: 6px;" /> |
 
 ---
 
-## 快速上手 (Quick Start)
+## 快速使用 (Quick Start)
 
-| 使用场景 | 对 AI 说 / 执行命令 | 说明 |
+| 场景 | 对助手说 / 终端执行 | 说明 |
 | :--- | :--- | :--- |
-| **不知写什么（自主选题）** | `今天选个题` | 结合后台经验库现挖 3 个高通过率候选 + S/A 级标题 |
-| **已有项目/链接（直接出稿）** | `用 gzh-article-pipeline 写这篇：<URL>` | 自动规划配图、生图、写稿、9 项质检并直推草稿箱 |
-| **复盘最近文章流量** | `python3 wechat-content-analysis/scripts/pull_and_analyze_mp.py --limit 30` | Chrome 保持登录 `mp.weixin.qq.com` 即可一键出诊断报告 |
+| **寻找选题** | `今天选个题` | 参考历史数据筛选 3 个高匹配候选方向及标题 |
+| **按链接成稿** | `用 gzh-article-pipeline 写这篇：<URL>` | 核查项目可用性后自动写稿、配图、质检并推至草稿箱 |
+| **复盘近期表现** | `python3 wechat-content-analysis/scripts/pull_and_analyze_mp.py --limit 30` | 本机 Chrome 保持登录 `mp.weixin.qq.com` 即可出分渠道明细 |
 
 <details>
-<summary><b>展开查看仓库目录结构</b></summary>
+<summary>目录结构</summary>
 
 ```text
 gzh-article-pipeline/
-├── gzh-article-pipeline/                      # 主创作与发布流水线 Skill
+├── gzh-article-pipeline/
 │   ├── SKILL.md                              # 全流程总控指令
 │   ├── scripts/
 │   │   ├── upload_to_wechat.py               # 微信草稿箱直推 (--no-safe-crop / --update-draft)
-│   │   ├── validate_article.py               # 离线 9 项质量、标题评分与违禁词校验器
+│   │   ├── validate_article.py               # 离线 9 项质检、标题评分与违禁词检查
 │   │   ├── gemini_web_bridge.py              # Chrome Gemini Web 429 自动容灾生图
 │   │   ├── generate_image_unified.py         # 生图双引擎统一调度器
-│   │   └── pull_and_analyze_mp.py            # 公众号后台全渠道数据拉取
+│   │   └── pull_and_analyze_mp.py            # 公众号后台渠道数据拉取
 │   └── references/
-│       ├── topic_selection.md                # 选品七道生死门与 4 维定位卡扣
-│       ├── writing_playbook.md               # 去说明书写法与标题百分制评分卡
-│       ├── visual_system.md                  # 21:9 吸睛封面规范与 7 维终检
-│       ├── olive_journal_template.py         # 橄榄手记内联 HTML 组件库与名片注入
+│       ├── topic_selection.md                # 选品与项目存活性检查规范
+│       ├── writing_playbook.md               # 非剧透开头、短段节奏与标题评分卡
+│       ├── visual_system.md                  # 21:9 封面视觉规范
+│       ├── olive_journal_template.py         # 纯内联 HTML 组件库
 │       └── account_empirical_profile.example.json
-└── wechat-content-analysis/                  # 独立公众号数据复盘专家 Skill
+└── wechat-content-analysis/                  # 独立公众号数据复盘 Skill
     ├── SKILL.md
     └── scripts/pull_and_analyze_mp.py
 ```
@@ -102,14 +102,14 @@ gzh-article-pipeline/
 
 ---
 
-## 安装与配置 (Installation)
+## 安装配置 (Installation)
 
-**方式 A（推荐）：** 直接把本仓库发给你的 Codex / Antigravity：
+**方式 A（通过 Codex / Antigravity 自动安装）：**
 ```text
 请帮我安装这个 skill：https://github.com/lukaizj/gzh-article-pipeline
 ```
 
-**方式 B：手动命令行安装**
+**方式 B（手动命令行安装）：**
 ```bash
 git clone https://github.com/lukaizj/gzh-article-pipeline.git /tmp/gzh-pipeline
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
@@ -117,17 +117,17 @@ cp -R /tmp/gzh-pipeline/gzh-article-pipeline "${CODEX_HOME:-$HOME/.codex}/skills
 cp -R /tmp/gzh-pipeline/wechat-content-analysis "${CODEX_HOME:-$HOME/.codex}/skills/"
 ```
 
-**配置微信推送凭据（仅直推草稿箱需要，复盘脚本免配）：**
-复制 `gzh-article-pipeline/references/config.example.json` 为 `config.json` 填入 `appid` / `appsecret`（需在公众号后台加本机 IP 白名单），或设置环境变量 `WECHAT_APPID`、`WECHAT_APPSECRET`。
+**配置微信推送凭据（仅推草稿箱需要，数据复盘脚本免配）：**
+复制 `gzh-article-pipeline/references/config.example.json` 为 `config.json` 填入 `appid` 与 `appsecret`（需在公众号后台配置本机 IP 白名单），或设置环境变量 `WECHAT_APPID`、`WECHAT_APPSECRET`。
 
 ---
 
-## 隐私安全与支持 (Contact)
+## 交流与支持 (Contact)
 
-- **零密钥泄漏保障**：`.gitignore` 默认屏蔽 `config.json` 与凭据缓存；所有排版、质检与后台拉取全部本机完成，无第三方代理。
-- **MIT 开源协议**：详见 [LICENSE](LICENSE)，欢迎提 Issue / PR。
+- **本地运行保障**：`.gitignore` 默认忽略 `config.json` 与数据缓存；排版、质检与后台拉取全部在本机完成，不经过第三方中转服务。
+- **MIT 协议**：详见 [LICENSE](LICENSE)，欢迎提 Issue 或 PR。
 
-| 微信赞赏支持 | 奇点造物所 AI 好用工具交流群 | 主理人微信（技术交流 / 一键部署定制） |
+| 赞赏支持 | 奇点造物所 AI 好用工具交流群 | 主理人微信（技术交流 / 部署协助） |
 | :---: | :---: | :---: |
 | <img src="assets/sponsor.png" width="200" alt="微信赞赏支持" style="border-radius: 8px;" /> | <img src="assets/wechat-group.jpg" width="200" alt="奇点造物所 AI 好用工具交流群" style="border-radius: 8px;" /> | <img src="assets/wechat.png" width="200" alt="主理人微信" style="border-radius: 8px;" /> |
-| **觉得好用，请作者喝杯冰美式** | **扫码入群交流（有效期至 11-27，过期加右微信拉群）** | **微信：`lukai391424`（备注 `开源` 或 `部署`）** |
+| **觉得省时，请作者喝杯冰美式** | **扫码入群交流（11-27 前有效，过期加右微信）** | **微信：`lukai391424`（备注 `开源` 或 `部署`）** |

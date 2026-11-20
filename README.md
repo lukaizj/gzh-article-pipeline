@@ -127,7 +127,7 @@ cp -R /tmp/gzh-pipeline/wechat-content-analysis "${CODEX_HOME:-$HOME/.codex}/ski
 - **零密钥泄漏保障**：`.gitignore` 默认屏蔽 `config.json` 与凭据缓存；所有排版、质检与后台拉取全部本机完成，无第三方代理。
 - **MIT 开源协议**：详见 [LICENSE](LICENSE)，欢迎提 Issue / PR。
 
-| 微信赞赏支持 | 主理人微信（技术交流 / 一键部署定制） |
-| :---: | :---: |
-| <img src="assets/sponsor.png" width="200" alt="微信赞赏支持" style="border-radius: 8px;" /> | <img src="assets/wechat.png" width="200" alt="主理人微信" style="border-radius: 8px;" /> |
-| **觉得好用，请作者喝杯冰美式** | **微信：`lukai391424`（备注 `开源` 或 `部署`）** |
+| 微信赞赏支持 | 奇点造物所 AI 好用工具交流群 | 主理人微信（技术交流 / 一键部署定制） |
+| :---: | :---: | :---: |
+| <img src="assets/sponsor.png" width="200" alt="微信赞赏支持" style="border-radius: 8px;" /> | <img src="assets/wechat-group.jpg" width="200" alt="奇点造物所 AI 好用工具交流群" style="border-radius: 8px;" /> | <img src="assets/wechat.png" width="200" alt="主理人微信" style="border-radius: 8px;" /> |
+| **觉得好用，请作者喝杯冰美式** | **扫码入群交流（有效期至 11-27，过期加右微信拉群）** | **微信：`lukai391424`（备注 `开源` 或 `部署`）** |

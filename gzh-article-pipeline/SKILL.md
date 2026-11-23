@@ -106,6 +106,13 @@ python3 /Users/qcc/.gemini/config/skills/gzh-article-pipeline/scripts/upload_to_
   --digest "<更新后的摘要>" \
   --update-draft "<已有草稿的 media_id>" \
   --cover "<新封面路径（若封面未改可使用 --reuse-thumb <已有thumb_id>）>"
+
+# 模式 C：小绿书 / 贴图帖专属推送（article_type="newspic"，含<=20字强校验、中心安全区封壳与实测thumb_url裁切验证）
+python3 /Users/qcc/.gemini/config/skills/gzh-article-pipeline/scripts/upload_newspic.py \
+  --images "<首图.jpg>" "<图2.jpg>" "<图3.jpg>" \
+  --title "<贴图标题（严格<=20字）>" \
+  --content-file "<300~500字精炼贴图正文.txt>" \
+  --verify-out "<导出线上203x270实测卡片预览路径.jpg>"
 ```
 
 #### 🚨 黄金发文窗口调度原则 (Timing Gate Rules)

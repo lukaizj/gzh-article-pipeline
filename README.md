@@ -129,5 +129,5 @@ cp -R /tmp/gzh-pipeline/wechat-content-analysis "${CODEX_HOME:-$HOME/.codex}/ski
 
 | 赞赏支持 | 奇点造物所 AI 好用工具交流群 | 主理人微信（技术交流 / 部署协助） |
 | :---: | :---: | :---: |
-| <img src="assets/sponsor.png" width="200" alt="微信赞赏支持" style="border-radius: 8px;" /> | <img src="assets/wechat-group.jpg" width="200" alt="奇点造物所 AI 好用工具交流群" style="border-radius: 8px;" /> | <img src="assets/wechat.png" width="200" alt="主理人微信" style="border-radius: 8px;" /> |
+| <img src="assets/sponsor.png" width="200" alt="微信赞赏支持" style="border-radius: 8px;" /> | <img src="assets/wechat-group-1130.jpg" width="200" alt="奇点造物所 AI 好用工具交流群" style="border-radius: 8px;" /> | <img src="assets/wechat.png" width="200" alt="主理人微信" style="border-radius: 8px;" /> |
 | **觉得省时，请作者喝杯冰美式** | **扫码入群交流（11-30 前有效，过期加右微信）** | **微信：`lukai391424`（备注 `开源` 或 `部署`）** |

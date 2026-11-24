@@ -37,18 +37,25 @@ except ImportError:
 TITLE_JARGON_BLACKLIST = [
     "MD", "Markdown", "Agent", "智能体", "紫微斗数", "天纪",
     "DNS", "软路由", "旁路由", "抓包", "逆向", "端口映射",
-    "固件", "编译", "内网穿透", "AI切片", "战情室",
+    "固件", "编译", "内网穿透", "AI切片", "战情室", "KDBX", "Docker",
 ]
+TITLE_GEEK_LABELS = ["GitHub", "开源", "万星"]
+LOW_ECPM_BAIT_WORDS = ["白嫖", "破解版", "全网看剧", "打游戏"]
 HARD_BANNED_WORDS = ["逼氪"]
 PUBLIC_AUDIENCE_KEYWORDS = [
-    "网盘", "微信", "电脑", "手机", "U盘", "电视", "大屏", "汽车",
-    "PDF", "内存", "空间", "广告", "下载", "备份", "省钱", "免费",
-    "卡顿", "卸载", "照片", "视频", "文件", "弹窗", "限速", "老旧",
+    "电脑", "手机", "浏览器", "微信", "U盘", "电视", "大屏", "汽车",
+    "PDF", "合同", "发票", "银行", "证券", "密码", "金库", "会员", "VIP",
+    "录音笔", "会议", "纪要", "语音", "网课", "英语", "内存", "空间",
+    "广告", "文件", "弹窗", "老旧", "省钱", "免费",
+]
+HIGH_ECPM_ANCHOR_KEYWORDS = [
+    "合同", "发票", "报销", "财务", "银行", "证券", "账密", "密码", "金库",
+    "PDF", "办公", "Excel", "会议", "纪要", "录音笔", "网课", "英语", "企业", "会员", "VIP",
 ]
 VIRAL_HOOK_KEYWORDS = [
-    "恶心吐了", "坑爹", "流氓", "别再", "别扔", "别当", "一键",
-    "1秒", "秒变", "连根拔起", "翻倍", "拉满", "骗了你", "扒透",
-    "释放", "免费", "彻底", "神作", "神器", "省下",
+    "恶心吐了", "坑爹", "流氓", "别再", "别让", "别花", "别开", "别扔", "别当",
+    "太危险", "冤枉钱", "一键", "1秒", "秒变", "连根拔起", "翻倍", "拉满",
+    "骗了你", "扒透", "锁死", "彻底", "神作", "神器", "省下", "出精华", "全免费",
 ]
 
 AI_BUZZWORDS = [
@@ -138,28 +145,40 @@ def count_cjk(text: str) -> int:
 def score_title_4dim(title: str) -> Tuple[int, str, Dict[str, int], List[str]]:
     """Estimate 4-dimension score (15 + 35 + 15 + 35 = 100) for a WeChat title."""
     notes: List[str] = []
-    # a. Audience match (15)
+    # a. Audience + high-eCPM commercial scenario match (15)
     aud_hits = [k for k in PUBLIC_AUDIENCE_KEYWORDS if k.lower() in title.lower()]
+    ecpm_hits = [k for k in HIGH_ECPM_ANCHOR_KEYWORDS if k.lower() in title.lower()]
     jargon_hits = [
         k for k in TITLE_JARGON_BLACKLIST
         if (bool(re.search(rf"(?<![a-zA-Z]){re.escape(k)}(?![a-zA-Z])", title, re.I)) if k.isascii() else (k in title))
     ]
+    geek_hits = [k for k in TITLE_GEEK_LABELS if k.lower() in title.lower()]
+    low_ecpm_hits = [k for k in LOW_ECPM_BAIT_WORDS if k in title]
 
     if jargon_hits:
         dim_a = 0
         notes.append(f"命中极客/小众黑话 {jargon_hits}，定位偏离扣至 0 分")
-    elif len(aud_hits) >= 2:
+    elif len(aud_hits) >= 2 and ecpm_hits:
         dim_a = 15
+    elif len(aud_hits) >= 2:
+        dim_a = 12
+        notes.append("具备大众受众词，若能嵌入合同/银行/会议/会员等高 eCPM 锚点词可进一步抬高单价")
     elif len(aud_hits) == 1:
-        dim_a = 10
+        dim_a = 9
     else:
         dim_a = 4
-        notes.append("缺少大众日常刚需母词（如网盘/微信/电脑/手机/省钱/广告），建议替换")
+        notes.append("缺少大众日常与高净值场景词（如银行/合同/PDF/会议/手机/电脑/会员），建议替换")
+
+    if geek_hits:
+        notes.append(f"标题包含技术门脸词 {geek_hits}，按双高模型建议改用省钱/安全/效率利益点")
+    if low_ecpm_hits:
+        dim_a = max(0, dim_a - 5)
+        notes.append(f"命中低 eCPM 引流词 {low_ecpm_hits}，极易被系统塞入低单价广告")
 
     # b. Click hook intensity (35)
     hook_hits = [k for k in VIRAL_HOOK_KEYWORDS if k in title]
     has_num = bool(re.search(r"\d+", title))
-    has_pain = any(w in title for w in ["恶心", "坑爹", "流氓", "别", "删", "费眼", "限速", "收费", "占"])
+    has_pain = any(w in title for w in ["恶心", "坑爹", "流氓", "别", "危险", "冤枉", "删", "费眼", "限速", "收费", "会员", "VIP"])
     dim_b = 10
     if has_pain:
         dim_b += 10
@@ -167,7 +186,7 @@ def score_title_4dim(title: str) -> Tuple[int, str, Dict[str, int], List[str]]:
         dim_b += 10
     elif len(hook_hits) == 1:
         dim_b += 6
-    if has_num or "免费" in title or "开源" in title:
+    if has_num or "免费" in title or "神器" in title or "金库" in title:
         dim_b += 5
     dim_b = min(35, dim_b)
 
@@ -179,7 +198,7 @@ def score_title_4dim(title: str) -> Tuple[int, str, Dict[str, int], List[str]]:
     elif tlen > 26:
         notes.append(f"标题长度 {tlen} 字超过 26 字上限，会被列表折叠截断")
 
-    # d. Viral template similarity (35)
+    # d. Viral + High-eCPM template similarity (35)
     is_pure_question = title.endswith(("吗？", "怎么样？", "好不好？"))
     has_emotive_colon = ("！" in title or "？" in title) and ("：" in title or "，" in title)
     dim_d = 12
@@ -189,7 +208,7 @@ def score_title_4dim(title: str) -> Tuple[int, str, Dict[str, int], List[str]]:
     else:
         if has_emotive_colon:
             dim_d += 12
-        if any(w in title for w in ["神作", "神器", "GitHub", "万星", "开源"]):
+        if ecpm_hits or any(w in title for w in ["神作", "神器", "金库", "全免费", "出精华"]):
             dim_d += 11
     dim_d = min(35, dim_d)
 

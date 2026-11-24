@@ -33,15 +33,15 @@
 
 ## 功能说明 (Features)
 
-针对公众号日常更新里「选题没谱、粘进后台掉样式、生图限流卡壳、发完看不懂推荐流数据」四个实际问题，用本地脚本和约束规则串起整条链路：
+针对公众号日常更新里的「选品高阅却低单价、封面同质化留白、粘贴掉样式、小绿书双重裁切及推荐流归因难」等实际痛点，用本地脚本和约束规则串起整条链路：
 
 | 模块 | 解决的问题 | 实现方式 |
 | :--- | :--- | :--- |
-| **选品与标题评分** | 推荐已停更的僵尸项目，或标题带专业术语导致点击率过低 | • 先核查仓库近况、提交记录与正式安装包，确认可用再写<br>• 按受众匹配度、点击钩子与长度（`<= 26` 字）百分制打分，低于 `75` 分自动重写 |
-| **短节奏正文与 9 项质检** | 开头直接剧透工具名、长段落挤在手机上看不下去、AI 套话多 | • 正文锁定 `950~1300` 纯汉字，前三句只抛痛点悬念（01 节再揭晓工具名），手机端控制 2~3 行短段<br>• `validate_article.py` 离线扫描段长、套话、词边界违禁词与 `<span leaf="">` 结构完整性 |
-| **`21:9` 封面与 429 容灾** | 封面在信息流里对比度太弱；生图 API 限流直接中断流程 | • 生成高对比内容主题 `21:9` 封面，支持 `--no-safe-crop` 满版直传<br>• `generate_image_unified.py` 遇 `429` 配额报错时，自动调用 `gemini_web_bridge.py` 接管 Chrome 网页版继续出图 |
-| **内联排版与草稿直推** | 微信编辑器吞外链 CSS；重改稿件时覆盖已添加的商品卡 | • `olive_journal_template.py` 全纯内联 HTML 组件输出，自动注入公众号关注名片<br>• `upload_to_wechat.py` 自动传图至微信 CDN，支持新建草稿或 `--update-draft` 原地覆盖更新 |
-| **后台数据拉取与复盘** | 发完只看总阅读，搞不清卡在点开率还是完读率 | • `pull_and_analyze_mp.py` 复用本机 Chrome 登录会话拉取单篇完读率与推荐渠道分布<br>• 自动将近期规律写回 `account_empirical_profile.json`，供下一篇选题参考 |
+| **双高选品与标题评分** | 推荐已停更僵尸项目；高阅读低单价“赚吆喝不赚钱”；标题黑话导致冷启动熔断 | • 先核查仓库近况、提交记录与正式安装包，确认可用再写<br>• 按 S/A/C 三级 eCPM 赛道优先级选品，执行「内层高商业语义 × 外层零黑话省钱痛点」双轨包装，按 `<= 26` 字四维打分（`< 75` 分自动重写）并惩罚低单价引流词 |
+| **短节奏正文与 9 项质检** | 开头剧透工具名导致收藏即退出、长段落阅读疲劳、AI 套话多 | • 正文锁定 `950~1300` 纯汉字（01 节再揭晓工具名），手机端控制 2~3 行短段，保障 `45%+` 高完读率带出文中与文末广告位<br>• `validate_article.py` 离线扫描段长、套话、词边界违禁词与 `<span leaf="">` 结构完整性 |
+| **剧情实景 `21:9` 封面与 429 容灾** | 封面套娃同质化、左右留白过多；生图 API 限流卡断流程 | • 结合正文具体剧情动作定制一文一实景构图，优先经 `gemini_web_bridge.py` 直出原生 `21:9`（`1024×434`）满版无留白封面并 `--no-safe-crop` 直传<br>• `generate_image_unified.py` 遇 `429` 配额报错自动无缝接管 Chrome 网页版出图 |
+| **图文直推与小绿书防裁切** | 编辑器吞外链 CSS；小绿书（`newspic`）标题超 20 字截断及双重居中裁切废图 | • `olive_journal_template.py` + `upload_to_wechat.py` 全内联输出并传图至 CDN，支持 `--update-draft` 原地覆盖与每日单发防稀释调度<br>• `upload_newspic.py` 强制 `<= 20` 字标题校验、中心安全区封壳，并在推送后自动回拉线上真实 `thumb_url` 生成 `203×270` 卡片验图 |
+| **后台数据拉取与复盘** | 发完只看总阅读，搞不清卡在点开率、完读率还是广告单价 | • `pull_and_analyze_mp.py` 复用本机 Chrome 登录会话拉取单篇完读率与推荐渠道分布<br>• 自动将近期规律写回 `account_empirical_profile.json`，供下一篇选题与排期校准 |
 
 ---
 
@@ -82,15 +82,16 @@ gzh-article-pipeline/
 ├── gzh-article-pipeline/
 │   ├── SKILL.md                              # 全流程总控指令
 │   ├── scripts/
-│   │   ├── upload_to_wechat.py               # 微信草稿箱直推 (--no-safe-crop / --update-draft)
-│   │   ├── validate_article.py               # 离线 9 项质检、标题评分与违禁词检查
-│   │   ├── gemini_web_bridge.py              # Chrome Gemini Web 429 自动容灾生图
+│   │   ├── upload_to_wechat.py               # 微信图文草稿箱直推 (--no-safe-crop / --update-draft)
+│   │   ├── upload_newspic.py                 # 小绿书 (newspic) <=20字校验、安全区封壳与实测卡片验图
+│   │   ├── validate_article.py               # 离线 9 项质检、双高标题评分与违禁词检查
+│   │   ├── gemini_web_bridge.py              # Chrome Gemini Web 原生 21:9 出图与 429 自动容灾
 │   │   ├── generate_image_unified.py         # 生图双引擎统一调度器
 │   │   └── pull_and_analyze_mp.py            # 公众号后台渠道数据拉取
 │   └── references/
-│       ├── topic_selection.md                # 选品与项目存活性检查规范
+│       ├── topic_selection.md                # 双高 eCPM 分级选品与项目存活性检查规范
 │       ├── writing_playbook.md               # 非剧透开头、短段节奏与标题评分卡
-│       ├── visual_system.md                  # 21:9 封面视觉规范
+│       ├── visual_system.md                  # 剧情实景 21:9 封面与小绿书双重裁切视觉规范
 │       ├── olive_journal_template.py         # 纯内联 HTML 组件库
 │       └── account_empirical_profile.example.json
 └── wechat-content-analysis/                  # 独立公众号数据复盘 Skill

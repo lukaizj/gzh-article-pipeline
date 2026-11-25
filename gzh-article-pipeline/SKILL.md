@@ -122,7 +122,9 @@ python3 scripts/upload_newspic.py \
 * 🛑 **【绝对死亡禁区：09:30 ~ 11:30 早会黑洞】**：历史 60 篇平均阅读仅 140~280，职场早会与清邮件高压黑洞，读者点开两眼即被迫锁屏切掉后台，完读率与即时互动瞬间被腰斩，严禁在此窗口群发主力文章！
 * 📅 **【周内节奏战术】**：周五/周六早晨为核武器爆发日；周一全网高压（历史均阅 69.4），严禁排冲锋大题材。
 
-#### 🔄 闭环反馈联动提示 (Feedback Loop)
+#### 🔄 闭环反馈与 Obsidian 自动归档联动 (Feedback & Archive Loop)
+`upload_to_wechat.py` 在成功推入草稿箱后，若本机存在 Obsidian 知识库（默认 `~/Documents/obsidian-vault/gzh-article-kb`，可通过 `--obsidian-vault` 或 `OBSIDIAN_GZH_VAULT` 指定，`--no-obsidian-archive` 可关闭），会自动调用 `scripts/archive_to_obsidian.py` 将定稿正文、本地配图与 `draft_media_id` 归档至对应专栏并更新 `00-INDEX.md`。
+
 推送草稿箱完成后，在回复末尾提醒用户：
 > 💡 *“文章群发 24~48 小时后，建议运行 `python3 scripts/pull_and_analyze_mp.py --limit 30 --refresh`，系统将自动回传单篇真实完读率、渠道推荐占比与流量主 7 日 eCPM 收入，持续校准经验画像库 `account_empirical_profile.json`。”*
 

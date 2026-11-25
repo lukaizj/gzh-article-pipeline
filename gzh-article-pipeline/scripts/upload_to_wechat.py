@@ -232,6 +232,8 @@ def main():
     parser.add_argument("--cover", help="封面图文件路径（默认使用找到的第一张图片）")
     parser.add_argument("--no-safe-crop", action="store_true", help="禁用 2.35:1 强制居中安全裁切缩小（保留原图满版画幅，与往期统一视觉比例）")
     parser.add_argument("--no-profile-card", action="store_true", help="禁用自动在文末兜底插入公众号名片卡片")
+    parser.add_argument("--no-obsidian-archive", action="store_true", help="禁用推送草稿箱后自动归档至 Obsidian 知识库")
+    parser.add_argument("--obsidian-vault", default=os.environ.get("OBSIDIAN_GZH_VAULT", os.path.expanduser("~/Documents/obsidian-vault/gzh-article-kb")), help="Obsidian 推文知识库目录（不存在时自动跳过）")
     parser.add_argument("--title", help="文章标题（默认从 HTML 提取）")
     parser.add_argument("--author", default=DEFAULT_AUTHOR, help="文章作者")
     parser.add_argument("--digest", help="文章摘要（不超过 120 字）")
@@ -265,14 +267,14 @@ def main():
                 local_images.append(full_path)
 
     # 确定封面图或复用已有封面
+    cover_path = args.cover
+    if not cover_path and local_images:
+        cover_path = local_images[0]
+
     if args.reuse_thumb:
         thumb_media_id = args.reuse_thumb
         print(f"2. 复用已有封面素材 thumb_media_id: {thumb_media_id}")
     else:
-        cover_path = args.cover
-        if not cover_path and local_images:
-            cover_path = local_images[0]
-
         if not cover_path or not os.path.exists(cover_path):
             print("错误: 未找到可用的封面图片", file=sys.stderr)
             sys.exit(1)
@@ -332,6 +334,31 @@ def main():
         print("   🛑 绝对死亡禁区: 09:30 ~ 11:30 (历史均阅仅 140~280，早会与邮件清零黑洞)")
         print("   📅 周内建议: 周五/周六早晨爆发力最强；周一全网高压黑洞(均阅69.4)")
         print("="*55 + "\n")
+
+    if not args.no_obsidian_archive and args.obsidian_vault:
+        try:
+            from pathlib import Path
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            if script_dir not in sys.path:
+                sys.path.insert(0, script_dir)
+            from archive_to_obsidian import archive_article
+
+            vault_dir = Path(args.obsidian_vault).expanduser()
+            if vault_dir.exists():
+                folder_name = "03-青川的孕期日记" if ("青川" in args.author or "孕" in args.author) else "02-已发布推文专栏"
+                archive_article(
+                    input_path=Path(html_path),
+                    title=title,
+                    vault_dir=vault_dir,
+                    account=args.author,
+                    folder_name=folder_name,
+                    cover_path=Path(cover_path) if cover_path and os.path.exists(cover_path) else None,
+                    status="已推送草稿箱",
+                    draft_media_id=str(draft_media_id),
+                    overwrite=bool(args.update_draft),
+                )
+        except Exception as e:
+            print(f"⚠️ Obsidian 自动归档跳过（不影响草稿箱推送）: {e}")
 
 if __name__ == "__main__":
     main()

@@ -15,23 +15,23 @@ description: >-
 当用户提出查看/拉取/分析公众号数据时，**必须直接运行以下脚本**获取最新真实后台数据，无需让用户手动截图或手动报数：
 
 ```bash
-# 默认精准分析最近 30~40 篇已发表文章并聚合渠道数据 (执行仅需 3~5 秒)
-python3 /Users/qcc/.gemini/config/skills/wechat-content-analysis/scripts/pull_and_analyze_mp.py --limit 30
+# 默认精准分析最近 30~40 篇已发表文章并聚合渠道、完读率与流量主7日收入 (执行仅需 3~5 秒)
+python3 scripts/pull_and_analyze_mp.py --limit 30
 
 # 若需全量拉取全号所有历史文章：
-python3 /Users/qcc/.gemini/config/skills/wechat-content-analysis/scripts/pull_and_analyze_mp.py --all
+python3 scripts/pull_and_analyze_mp.py --all
 
 # 若需强制刷新所有本地缓存：
-python3 /Users/qcc/.gemini/config/skills/wechat-content-analysis/scripts/pull_and_analyze_mp.py --refresh
+python3 scripts/pull_and_analyze_mp.py --refresh
 ```
 
 ### 自动化脚本核心能力：
 1. **自动连接本地 Chrome 微信公众平台标签页**（免扫码、免登录凭据泄漏风险）。
-2. **账号全盘画像**：实时总粉丝数、昨日阅读人次、昨日分享、周报公域推荐阅读聚合。
-3. **单篇「发表数据」全渠道透视**：提取每篇文章在推荐流（公域看一看）、公众号消息（常读私域）、聊天会话（群转发）中的真实 UV 占比。
+2. **账号全盘画像与 7 日广告变现**：实时总粉丝数、昨日阅读/分享、周报推荐聚合，以及自动拉取近 7 日流量主累计收入、曝光、点击与综合 `eCPM`。
+3. **单篇「发表数据」全渠道与真实完读率透视**：提取每篇文章的**真实完读率（`finished_read_pv_ratio`）**及推荐流（公域看一看）、公众号消息（常读私域）、聊天会话（群转发）UV 占比，并自动识别 `T+0` 当日未结算文章避免误判为零推荐。
 4. **科学分层归因矩阵**：
-   - 爆款破圈池（阅读 $\ge$ 1,000）：推荐占比通常 $\ge$ 90%；
-   - 私域低阅池（阅读 < 300）：推荐占比通常 < 5%（算法推荐熔断），阅读量被困在常读粉丝盘（80~120 阅）。
+   - 爆款破圈池（阅读 $\ge$ 1,000）：推荐占比通常 $\ge$ 80%，零推荐比例 0%；
+   - 私域低阅池（阅读 < 300）：推荐占比通常 < 15%（算法推荐熔断），阅读量被困在常读粉丝盘（100~180 阅）。
 
 ---
 

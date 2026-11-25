@@ -79,16 +79,16 @@ description: >-
    - **文案去极客化 + 高 `eCPM` 锚点**：封面标题与色带严禁写 `GitHub / 开源 / 万星 / KDBX`，只放普通人痛点与金钱/安全/职场收益；
    - **原生 `21:9` 满版直出（零左右留白）**：优先调用 `gemini_web_bridge.py` 直出原生 `21:9`（`1024×434`）edge-to-edge 满版图（元素铺满左右边缘，禁止左右拼接纯色边条或留白边框），推送时加 `--no-safe-crop` 保留满版视觉；正文配图结合实机截图与清爽浅底插图。
 3. **内联 HTML 组装**：调用 `references/olive_journal_template.py`（橄榄手记），文末固定保留开源传送门（`github_portal_card`）、底部引导块（`outro_follow_card`）及 **「奇点造物所」微信官方互动账号名片（`mp_profile_card()` / `<mp-common-profile>`）**；推送脚本 `upload_to_wechat.py` 亦会在上传前自动检测并在文末兜底插入该公众号名片（幂等不重复）。🚨 **严禁在正文顶部添加 header_meta 或任何重复标题/作者元信息块**（微信自带官方置顶大标题），**严禁在文末（尤其是 `github_portal_card` 与 `outro_follow_card` 之间）添加任何评论区引导提问段落（如“平时你遇到过吗/欢迎在评论区聊聊你的经历”）、连载预告（SERIES PREVIEW）、留言区互动话题（`interactive_cta_card`）或一键复制微信群安利词（FORWARDING TEMPLATE）**；
-4. **格式与 9 项质量机器合规校验**：运行 `LeafWrapper` 与 `LeafValidator` 确保 100% `<span leaf="">` 包裹，且必须执行 `python3 /Users/qcc/.gemini/config/skills/gzh-article-pipeline/scripts/validate_article.py --input "<HTML路径>" --title "<标题>"`（完成标题四维打分、纯汉字字数、手机端段落行数、AI 黑话、词边界违禁扫雷、图文密度、信息密度及开篇结尾检查）后方可推送草稿箱；封面图须对照 `references/visual_system.md` 五节完成 7 维出图终检。
+4. **格式与 9 项质量机器合规校验**：运行 `LeafWrapper` 与 `LeafValidator` 确保 100% `<span leaf="">` 包裹，且必须执行 `python3 scripts/validate_article.py --input "<HTML路径>" --title "<标题>"`（常规精简流默认 `--profile standard`，若用户明确要求详尽深度图解可传 `--profile deep` 放宽至 `1000~2200` 字）后方可推送草稿箱；封面图须对照 `references/visual_system.md` 五节完成 7 维出图终检。
 
 ---
 
 ### 阶段四：一键推送微信公众号草稿箱与定时门禁调度 (Publishing & Timing Gate)
-排版与图片准备就绪后，直接运行发布脚本，并执行**发文时段门禁调度器**：
+排版与图片准备就绪后，直接运行发布脚本（均位于本 Skill 目录下的 `scripts/`），并执行**发文时段门禁调度器**：
 
 ```bash
 # 模式 A：首次推送到草稿箱（新建草稿）
-python3 /Users/qcc/.gemini/config/skills/gzh-article-pipeline/scripts/upload_to_wechat.py \
+python3 scripts/upload_to_wechat.py \
   --html "<排版好的HTML绝对路径>" \
   --images-dir "<图片所在目录>" \
   --title "<文章标题（严格<=26字）>" \
@@ -97,7 +97,7 @@ python3 /Users/qcc/.gemini/config/skills/gzh-article-pipeline/scripts/upload_to_
   --cover "<封面图绝对路径>"
 
 # 模式 B：覆盖更新已有草稿（防劣化覆写模式，修改标题/摘要/封面时专用）
-python3 /Users/qcc/.gemini/config/skills/gzh-article-pipeline/scripts/upload_to_wechat.py \
+python3 scripts/upload_to_wechat.py \
   --html "<本地重新编译的完整HTML路径>" \
   --images-dir "<图片所在目录>" \
   --title "<更新后的标题（严格<=26字）>" \
@@ -107,7 +107,7 @@ python3 /Users/qcc/.gemini/config/skills/gzh-article-pipeline/scripts/upload_to_
   --cover "<新封面路径（若封面未改可使用 --reuse-thumb <已有thumb_id>）>"
 
 # 模式 C：小绿书 / 贴图帖专属推送（article_type="newspic"，含<=20字强校验、中心安全区封壳与实测thumb_url裁切验证）
-python3 /Users/qcc/.gemini/config/skills/gzh-article-pipeline/scripts/upload_newspic.py \
+python3 scripts/upload_newspic.py \
   --images "<首图.jpg>" "<图2.jpg>" "<图3.jpg>" \
   --title "<贴图标题（严格<=20字）>" \
   --content-file "<300~500字精炼贴图正文.txt>" \
@@ -117,14 +117,14 @@ python3 /Users/qcc/.gemini/config/skills/gzh-article-pipeline/scripts/upload_new
 #### 🚨 黄金发文窗口调度原则 (Timing Gate Rules)
 推送草稿箱完成后，必须显式在回复中提示用户建议的定时群发时间与推荐文案：
 * 👑 **【首选发射窗：07:00 ~ 07:20】**：历史平均阅读 **2,250.9**，享有 16 小时完整白天发酵期，冲锋型核武器必须在此窗口发出！
-* 🚫 **【每日单发防稀释铁律】**：严禁同一天多次群发（`mass=True`）或发重帖试水，每日严格只推 **1 篇 `07:00` 主推**，保住订阅号常读打开基盘（`msg_uv > 150`）；
+* 🚫 **【每日单发与 72h 防撞车铁律】**：严禁同一天多次群发（`mass=True`）或发重帖试水，每日严格只推 **1 篇 `07:00` 主推**；连续 72 小时内避免连发同一细分题材（如连续两天“手机连电脑/游戏”）或连续 3 篇套用“别再买……”句式，防止常读粉丝脱敏！
 * 🌙 **【备选发射窗：20:45 ~ 21:15】**：晚间休闲娱乐档，视听、轻量神器的备选窗口。
 * 🛑 **【绝对死亡禁区：09:30 ~ 11:30 早会黑洞】**：历史 60 篇平均阅读仅 140~280，职场早会与清邮件高压黑洞，读者点开两眼即被迫锁屏切掉后台，完读率与即时互动瞬间被腰斩，严禁在此窗口群发主力文章！
 * 📅 **【周内节奏战术】**：周五/周六早晨为核武器爆发日；周一全网高压（历史均阅 69.4），严禁排冲锋大题材。
 
 #### 🔄 闭环反馈联动提示 (Feedback Loop)
 推送草稿箱完成后，在回复末尾提醒用户：
-> 💡 *“文章群发 24~48 小时后，建议运行 `python3 /Users/qcc/.gemini/config/skills/wechat-content-analysis/scripts/pull_and_analyze_mp.py`，系统将自动回传最新完读率与渠道推荐数据，持续校准经验画像库 `account_empirical_profile.json`。”*
+> 💡 *“文章群发 24~48 小时后，建议运行 `python3 scripts/pull_and_analyze_mp.py --limit 30 --refresh`，系统将自动回传单篇真实完读率、渠道推荐占比与流量主 7 日 eCPM 收入，持续校准经验画像库 `account_empirical_profile.json`。”*
 
 ---
 

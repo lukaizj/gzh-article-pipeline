@@ -56,6 +56,9 @@ VIRAL_HOOK_KEYWORDS = [
     "恶心吐了", "坑爹", "流氓", "别再", "别让", "别花", "别开", "别扔", "别当",
     "太危险", "冤枉钱", "一键", "1秒", "秒变", "连根拔起", "翻倍", "拉满",
     "骗了你", "扒透", "锁死", "彻底", "神作", "神器", "省下", "出精华", "全免费",
+    # 自然第一人称与真实好奇钩子（反套路疲劳）
+    "我把", "原来", "居然", "最怕", "每天", "少爬", "替你", "直连", "直接",
+    "手搓", "几十块", "闲置", "不用", "一招", "全包", "免费",
 ]
 
 AI_BUZZWORDS = [
@@ -78,7 +81,7 @@ COMPLIANCE_REDLINES = [
     (r"(评论区|留言区).{0,10}(聊聊|说说|提问|分享)", "文末禁止评论区/留言区盖楼引导"),
     (r"周杰伦.{0,12}(免费|白嫖|VIP|破解)", "禁止触碰腾讯音乐周杰伦独家版权红线"),
     (r"(QQ音乐|腾讯视频).{0,12}(VIP|SVIP|破解|白嫖)", "禁止触碰腾讯系 VIP 白嫖版权红线"),
-    (r"(微信群控|微信外挂|微信协议破解)", "禁止触碰微信生态外挂红线"),
+    (r"(?<!不用装)(?<!不装)(?<!拒绝)(?<!远离)(?<!非)(?<!不是)(微信群控|微信外挂|微信协议破解)", "禁止触碰微信生态外挂红线"),
     (r"(全网最全|绝对第一|永久破解|100%有效)", "避免广告法极限/绝对化用词"),
 ]
 ENGLISH_RISKY_WORDS = ["crack", "keygen", "pirate", "warez"]
@@ -313,9 +316,10 @@ def run_validation(path: Path, title: str, min_cjk: int, max_cjk: int) -> Dict:
 
     # 2. Pure CJK count
     cjk_total = count_cjk(plain)
-    if cjk_total > 1500:
+    hard_upper = max(1500, max_cjk)
+    if cjk_total > hard_upper:
         wc_status = "warning"
-        wc_note = "纯汉字超 1500 字，极易触发『收藏吃灰』中途跳出导致完读率崩盘"
+        wc_note = f"纯汉字超 {hard_upper} 字，极易触发『收藏吃灰』中途跳出导致完读率崩盘"
     elif min_cjk <= cjk_total <= max_cjk:
         wc_status = "pass"
         wc_note = f"处于 {min_cjk}~{max_cjk} 黄金精读区间"
@@ -336,8 +340,9 @@ def run_validation(path: Path, title: str, min_cjk: int, max_cjk: int) -> Dict:
         "examples": long_paras[:5],
     })
 
-    # 4. AI buzzwords & mechanical endings
-    ai_hits = [w for w in AI_BUZZWORDS if w in plain]
+    # 4. AI buzzwords & mechanical endings (忽略书名号/方括号内原软件菜单名如「沉淀到 Obsidian」)
+    plain_no_ui_quotes = re.sub(r"「[^」]{1,20}」", "", plain)
+    ai_hits = [w for w in AI_BUZZWORDS if w in plain_no_ui_quotes]
     pat_hits = [p for p in AI_PATTERNS if re.search(p, plain)]
     record("ai_buzzwords", "warning" if (ai_hits or pat_hits) else "pass", {
         "buzzwords": ai_hits,
@@ -432,18 +437,23 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="微信公众号文章 9 项质量与合规自动校验器")
     parser.add_argument("--input", required=True, help="待校验的 HTML 或 Markdown 文件路径")
     parser.add_argument("--title", default="", help="文章标题（可选，用于四维评分与黑话检测）")
-    parser.add_argument("--min-cjk", type=int, default=950, help="纯汉字最低建议值（默认 950）")
-    parser.add_argument("--max-cjk", type=int, default=1300, help="纯汉字最高建议值（默认 1300）")
+    parser.add_argument("--profile", choices=["standard", "deep"], default="standard", help="校验档位: standard(950~1300字精简流) / deep(1000~2200字深度图解)")
+    parser.add_argument("--min-cjk", type=int, default=None, help="纯汉字最低建议值（覆盖 profile 默认值）")
+    parser.add_argument("--max-cjk", type=int, default=None, help="纯汉字最高建议值（覆盖 profile 默认值）")
     parser.add_argument("--json", default="", help="可选，导出完整 JSON 质检报告的路径")
     parser.add_argument("--strict", action="store_true", help="严格模式：存在任意 warning 也返回非零退出码")
     args = parser.parse_args()
+
+    default_min, default_max = (1000, 2200) if args.profile == "deep" else (950, 1300)
+    min_cjk = args.min_cjk if args.min_cjk is not None else default_min
+    max_cjk = args.max_cjk if args.max_cjk is not None else default_max
 
     target = Path(args.input).expanduser().resolve()
     if not target.exists():
         print(f"❌ 文件不存在: {target}")
         sys.exit(2)
 
-    report = run_validation(target, args.title, args.min_cjk, args.max_cjk)
+    report = run_validation(target, args.title, min_cjk, max_cjk)
 
     if args.json:
         out_p = Path(args.json).expanduser().resolve()

@@ -17,7 +17,7 @@ import os
 import sys
 import argparse
 import statistics
-from datetime import datetime
+from datetime import datetime, timedelta
 
 SCENES_MAP = {
     "0": "公众号消息(常读粉丝)",
@@ -110,6 +110,52 @@ def get_account_overview():
         return json.loads(out)
     except:
         return {}
+
+
+def get_publisher_revenue(days=7):
+    """拉取最近 N 天流量主每日曝光、点击、收入(元)与 eCPM"""
+    end_d = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    start_d = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+    js = f"""
+    (() => {{
+        try {{
+            const token = new URL(location.href).searchParams.get("token");
+            if (!token) return JSON.stringify([]);
+            const xhr = new XMLHttpRequest();
+            const url = "/promotion/publisher/publisher_stat?action=stat&page=1&page_size=100&start_date={start_d}&end_date={end_d}&slot=1&token=" + token + "&appid=&spid=&_=" + Date.now();
+            xhr.open("GET", url, false);
+            xhr.send(null);
+            const data = JSON.parse(xhr.responseText);
+            const rows = (data.cost_list && data.cost_list.cost) || [];
+            const byDate = {{}};
+            for (const r of rows) {{
+                const d = r.start_time;
+                if (!d) continue;
+                if (!byDate[d]) byDate[d] = {{ date: d, views: 0, clicks: 0, cost_fen: 0 }};
+                byDate[d].views += (r.view_count || 0);
+                byDate[d].clicks += (r.click_count || 0);
+                byDate[d].cost_fen += (r.cost || 0);
+            }}
+            const out = Object.values(byDate).sort((a, b) => b.date.localeCompare(a.date)).map(x => ({{
+                date: x.date,
+                views: x.views,
+                clicks: x.clicks,
+                income_yuan: Number((x.cost_fen / 100).toFixed(2)),
+                ecpm: x.views > 0 ? Number(((x.cost_fen / 100) / x.views * 1000).toFixed(2)) : 0.0
+            }}));
+            return JSON.stringify(out);
+        }} catch(e) {{
+            return JSON.stringify([]);
+        }}
+    }})()
+    """
+    out = run_chrome_js(js)
+    if not out:
+        return []
+    try:
+        return json.loads(out)
+    except Exception:
+        return []
 
 def get_articles_catalog(max_count=200):
     """获取已发布文章目录"""
@@ -265,11 +311,13 @@ def main():
     print("🔍 [WeChat MP] 正在连接 Chrome 浏览器并拉取公众号实时发表数据...")
     print("=================================================================")
 
-    # 1. 账号概览
+    # 1. 账号概览与流量主 7 日收益
     overview = get_account_overview()
+    revenue_7d = get_publisher_revenue(days=7)
     home_stats = overview.get("homeStats", {})
     read_7d = overview.get("read7d", 0)
     read_30d = overview.get("read30d", 0)
+    today_str = datetime.now().strftime("%Y-%m-%d")
 
     # 2. 文章列表
     catalog = get_articles_catalog(max_count=200 if args.all else 60)
@@ -308,11 +356,13 @@ def main():
         with open(cache_file, "w", encoding="utf-8") as f:
             json.dump(list(analyzed_map.values()), f, ensure_ascii=False, indent=2)
 
-    # 4. 统计与指标计算
+    # 4. 统计与指标计算 (保证实时指标100%最新，不被缓存陈旧数字覆盖)
     analyzed_articles = []
     for a in target_articles:
-        item = analyzed_map.get(a["msgid"], a)
-        ch = item.get("channels", {})
+        cached = analyzed_map.get(a["msgid"], {})
+        # 以实时的 a 覆盖 cached 中的计数指标 (read_num, share_num, like_num 等)
+        item = {**cached, **a}
+        ch = cached.get("channels", {})
         ch_total = sum(ch.values())
         rec_uv = ch.get("6", 0)
         msg_uv = ch.get("0", 0)
@@ -322,12 +372,19 @@ def main():
         msg_ratio = (msg_uv / ch_total * 100) if ch_total > 0 else 0.0
         chat_ratio = (chat_uv / ch_total * 100) if ch_total > 0 else 0.0
         
-        r_num = item.get("read_num", 0)
-        s_num = item.get("share_num", 0)
+        r_num = a.get("read_num", 0)
+        s_num = a.get("share_num", 0)
         share_rate = (s_num / r_num * 100) if r_num > 0 else 0.0
+        raw_fin = item.get("finished_read_ratio", 0) or 0
+        finish_pct = (raw_fin * 100.0) if 0 < raw_fin <= 1.0 else float(raw_fin)
+        is_t0_unsettled = (a.get("date") == today_str and ch_total == 0)
 
         analyzed_articles.append({
             **item,
+            "read_num": r_num,
+            "share_num": s_num,
+            "like_num": a.get("like_num", 0),
+            "old_like_num": a.get("old_like_num", 0),
             "ch_total": ch_total,
             "rec_uv": rec_uv,
             "msg_uv": msg_uv,
@@ -335,7 +392,9 @@ def main():
             "rec_ratio": rec_ratio,
             "msg_ratio": msg_ratio,
             "chat_ratio": chat_ratio,
-            "share_rate": share_rate
+            "share_rate": share_rate,
+            "finish_pct": finish_pct,
+            "is_t0_unsettled": is_t0_unsettled,
         })
 
     # 分层
@@ -358,6 +417,13 @@ def main():
     
     if read_30d > 0:
         print(f"🌐 官方统计: 近30天总阅读用户 {read_30d:,} 人 | 近7天总阅读用户 {read_7d:,} 人")
+
+    if revenue_7d:
+        tot_rev = sum(r["income_yuan"] for r in revenue_7d)
+        tot_views = sum(r["views"] for r in revenue_7d)
+        avg_ecpm = (tot_rev / tot_views * 1000) if tot_views > 0 else 0.0
+        latest = revenue_7d[0]
+        print(f"💰 流量主近{len(revenue_7d)}日: 累计收入 ¥{tot_rev:.2f} | 综合 eCPM ¥{avg_ecpm:.2f} | 昨日({latest['date']}) ¥{latest['income_yuan']:.2f} (曝光 {latest['views']:,}, 点击 {latest['clicks']}, eCPM ¥{latest['ecpm']:.2f})")
     
     # Calculate aggregate channel distribution across analyzed articles
     agg_channels = {}
@@ -380,19 +446,23 @@ def main():
     def format_tier(name, items):
         if not items:
             return f"【{name}】: 0 篇"
+        settled = [x for x in items if not x.get("is_t0_unsettled")]
         avg_r = statistics.mean([x["read_num"] for x in items])
-        avg_rec = statistics.mean([x["rec_ratio"] for x in items])
-        avg_msg = statistics.mean([x["msg_ratio"] for x in items])
+        avg_rec = statistics.mean([x["rec_ratio"] for x in settled]) if settled else 0.0
+        avg_msg = statistics.mean([x["msg_ratio"] for x in settled]) if settled else 0.0
         avg_share = statistics.mean([x["share_rate"] for x in items])
-        avg_finish = statistics.mean([x.get("finished_read_ratio", 0) for x in items]) * 100
-        zero_rec = sum(1 for x in items if x["rec_uv"] == 0 or x["rec_ratio"] < 5.0)
+        fin_vals = [x["finish_pct"] for x in items if x.get("finish_pct", 0) > 0]
+        avg_finish_str = f"{statistics.mean(fin_vals):5.1f}%" if fin_vals else "  -- "
+        zero_rec = sum(1 for x in settled if x["rec_uv"] == 0 or x["rec_ratio"] < 5.0)
+        zero_denom = len(settled)
+        zero_pct = (zero_rec / zero_denom * 100) if zero_denom > 0 else 0.0
         return (
             f"【{name}】（共 {len(items)} 篇，占比 {len(items)/len(analyzed_articles)*100:.1f}%）:\n"
             f"   - 平均阅读量: {avg_r:.0f} 阅\n"
-            f"   - 推荐流量占比 (公域): {avg_rec:5.1f}% 👈\n"
-            f"   - 粉丝消息占比 (私域): {avg_msg:5.1f}%\n"
-            f"   - 平均分享率: {avg_share:5.2f}%\n"
-            f"   - 零推荐比例 (<5%推荐): {zero_rec}/{len(items)} 篇 ({zero_rec/len(items)*100:.1f}%)"
+            f"   - 推荐流量占比 (公域·已结算): {avg_rec:5.1f}% 👈\n"
+            f"   - 粉丝消息占比 (私域·已结算): {avg_msg:5.1f}%\n"
+            f"   - 平均完读率: {avg_finish_str} | 平均分享率: {avg_share:5.2f}%\n"
+            f"   - 零推荐比例 (<5%推荐·不含T+0): {zero_rec}/{zero_denom} 篇 ({zero_pct:.1f}%)"
         )
 
     print(format_tier("头部破圈爆款池 (阅读 >= 1000)", tier_high))
@@ -401,37 +471,67 @@ def main():
     print("-" * 50)
     print(format_tier("低阅读私域池 (阅读 < 300)", tier_low))
 
+
+    print("=" * 65)
+    print("⏱️ 三、 近期发表文章全景追踪 (按时间倒序)")
+    print("=" * 65)
+    sorted_by_time = sorted(analyzed_articles, key=lambda x: (x.get("date") or "", x.get("msgid") or ""), reverse=True)
+    for i, a in enumerate(sorted_by_time[:6]):
+        r = a.get("read_num", 0)
+        sr = a.get("share_rate", 0.0)
+        fp = a.get("finish_pct", 0.0)
+        fp_str = f"{fp:4.1f}%" if fp > 0 else "  -- "
+        if a.get("is_t0_unsettled"):
+            ch_str = "推荐:结算中 | 粉丝:结算中"
+        else:
+            ch_str = f"推荐:{a.get('rec_ratio', 0.0):4.1f}% | 粉丝:{a.get('msg_ratio', 0.0):4.1f}%"
+        title = a.get("title", "")[:36]
+        d = a.get("date", "--")
+        print(f" {i+1}. [{r:4d}阅 | 完读:{fp_str} | 享:{sr:4.1f}% | {ch_str}] {title} ({d})")
+
     print("\n" + "=" * 65)
-    print("🏆 三、 头部爆款文章渠道透视 TOP 5")
+    print("🏆 四、 头部爆款文章渠道透视 TOP 5")
     print("=" * 65)
     sorted_high = sorted(analyzed_articles, key=lambda x: x["read_num"], reverse=True)
     for i, a in enumerate(sorted_high[:5]):
-        print(f" {i+1}. [{a['read_num']:5d}阅 | 享:{a['share_rate']:4.1f}% | 推荐:{a['rec_ratio']:4.1f}% | 粉丝:{a['msg_ratio']:4.1f}%] {a['title'][:32]} ({a['date']})")
+        fp = a.get("finish_pct", 0.0)
+        fp_str = f"{fp:4.1f}%" if fp > 0 else "  -- "
+        print(f" {i+1}. [{a['read_num']:5d}阅 | 完读:{fp_str} | 享:{a['share_rate']:4.1f}% | 推荐:{a['rec_ratio']:4.1f}% | 粉丝:{a['msg_ratio']:4.1f}%] {a['title'][:36]} ({a['date']})")
 
     print("\n" + "=" * 65)
-    print("❄️ 四、 近期低阅读文章归因透视 (为什么卡在 100 阅)")
+    print("❄️ 五、 近期低阅读文章归因透视 (为什么卡在 100 阅)")
     print("=" * 65)
     sorted_by_date = sorted(analyzed_articles, key=lambda x: x["date"], reverse=True)
-    low_recent = [a for a in sorted_by_date if a["read_num"] < 200][:8]
+    low_recent = [a for a in sorted_by_date if a["read_num"] < 250][:8]
     for i, a in enumerate(low_recent):
-        tag = "❄️ 零推荐" if a["rec_ratio"] < 5.0 else ("⚠️ 微推荐" if a["rec_ratio"] < 20.0 else "🌱 推荐中")
-        print(f" {i+1}. [{a['read_num']:3d}阅 | {tag} (推荐:{a['rec_ratio']:4.1f}% 粉丝:{a['msg_ratio']:4.1f}%)] {a['title'][:32]} ({a['date']})")
+        if a.get("is_t0_unsettled"):
+            tag = "⏳ 当日数据结算中 (T+0 渠道未出)"
+        elif a["share_rate"] >= 15.0 and a["rec_ratio"] < 5.0:
+            tag = "⚡️ 圈层自嗨 (高分享但死在第1关CTR/第2关完读率)"
+        elif a["rec_ratio"] < 5.0:
+            tag = "❄️ 零推荐 (公域初筛未通过)"
+        elif a["rec_ratio"] < 20.0:
+            tag = "⚠️ 微推荐 (推荐受阻)"
+        else:
+            tag = "🌱 推荐中"
+        print(f" {i+1}. [{a['read_num']:3d}阅 | 享:{a['share_rate']:4.1f}% | {tag}] {a['title'][:34]} ({a['date']})")
 
     print("\n" + "=" * 65)
-    print("💡 五、 算法分发核心洞察与运营铁律")
+    print("💡 六、 算法分发核心洞察与运营铁律")
     print("=" * 65)
-    print("1. 【私域底盘常态】: 本号目前有 80~120 个忠实常读粉丝。任何文章只要没有进入算法推荐，阅读量必然严格停留在 100~150 阅之间。")
-    print("2. 【推荐熔断机制】: 微信算法前2小时初筛，若初始分享率 < 15% 或受众过窄导致公域CTR低，推荐流会在50~100次曝光后直接熔断。")
-    print("3. 【爆款三要素】: 全民级国民痛点 (限速/查骚扰/白嫖会员) + 极具冲突性的大字封面 + 前200字直接给出开箱方案。")
+    print("1. 【三道递进闸门定律】: 算法按‘第1关公域CTR ➔ 第2关完读率 ➔ 第3关分享率’严格顺序考核。高分享率（如26%）若死在第1关（标题出现‘路由器/改代码’等认知阻力词，或封面脱敏），公域流在第1关即刻熔断！")
+    print("2. 【圈层自嗨与收藏吃灰】: 极客圈层高分享多为‘收藏吃灰/标记转发’，若字数过长（>2000字）导致完读率<20%，系统判定为枯燥沉重，彻底切断外部分发。")
+    print("3. 【严格字数控制与零阻力】: 纯文本必须严格控制在 1000~1300 字（保 40%+ 完读率），标题与封面严禁使用‘改路由器/改代码/DNS’等认知门槛词，用‘插上U盘/一键解压/扫码秒推’消除阻力。")
+    print("4. 【私域底盘常态】: 本号目前有 80~120 个忠实常读铁粉。任何文章只要没有进入算法推荐，阅读量必然严格停留在 100~180 阅之间。")
     print("=================================================================\n")
 
     # 自动保存实证经验画像库供生产流水线 (gzh-article-pipeline) 消费闭环
     try:
-        export_empirical_profile(overview, analyzed_articles, tier_high, tier_mid, tier_low)
+        export_empirical_profile(overview, analyzed_articles, tier_high, tier_mid, tier_low, revenue_7d=revenue_7d)
     except Exception as e:
         print(f"⚠️ 保存经验画像时发生异常: {e}")
 
-def export_empirical_profile(overview, analyzed_articles, tier_high, tier_mid, tier_low):
+def export_empirical_profile(overview, analyzed_articles, tier_high, tier_mid, tier_low, revenue_7d=None):
     """
     将分析提炼出的实证数据沉淀为结构化 JSON，供 gzh-article-pipeline 实时消费
     """
@@ -449,16 +549,19 @@ def export_empirical_profile(overview, analyzed_articles, tier_high, tier_mid, t
             "read_num": a["read_num"],
             "rec_ratio": round(a["rec_ratio"], 1),
             "share_rate": round(a["share_rate"], 1),
+            "finish_pct": round(a.get("finish_pct", 0.0), 1),
             "date": a["date"]
         })
 
     sorted_by_date = sorted(analyzed_articles, key=lambda x: x["date"], reverse=True)
     melted_samples = []
-    for a in [x for x in sorted_by_date if x["read_num"] < 250][:8]:
+    for a in [x for x in sorted_by_date if x["read_num"] < 250 and not x.get("is_t0_unsettled")][:8]:
         melted_samples.append({
             "title": a["title"],
             "read_num": a["read_num"],
+            "share_rate": round(a["share_rate"], 1),
             "rec_ratio": round(a["rec_ratio"], 1),
+            "finish_pct": round(a.get("finish_pct", 0.0), 1),
             "date": a["date"]
         })
 
@@ -471,15 +574,18 @@ def export_empirical_profile(overview, analyzed_articles, tier_high, tier_mid, t
             "yesterday_follow": home_stats.get("yesterday_follow", "0"),
             "weekly_rec": home_stats.get("weekly_rec", "0")
         },
+        "recent_revenue_7d": revenue_7d or [],
         "empirical_rules": {
             "private_base_reads_range": [round(avg_low * 0.8), round(avg_low * 1.2)],
             "rec_breakout_target_reads": round(avg_high),
             "min_share_rate_threshold": round(avg_high_share, 1),
             "rec_ratio_breakout_threshold": 60.0,
             "core_insights": [
-                "常读私域底盘为 100~150 阅，未进入公域推荐前严禁预期过高",
-                "微信算法前2小时初筛，若初始分享率 < 15% 或受众过窄，推荐流会迅速熔断",
-                "爆款标配：全民级痛点 + 极具冲突性的大字封面 + 前200字给方案"
+                "【三道递进闸门定律】: 算法按第1关公域CTR ➔ 第2关完读率 ➔ 第3关分享率严格顺序过关。26%高分享率若死在第1关门槛词，公域流直接熔断",
+                "【圈层自嗨陷阱】: 极客高分享多为收藏式转发，若正文篇幅>2000字拖垮完读率，算法判定为枯燥沉重并终止推流",
+                "【严格字数控制】: 正文纯文本必须严格控制在 1000~1300 字（保 40%+ 完读率），避免长文跳出",
+                "【消灭认知阻力词】: 标题与封面严禁出现‘路由器/改代码/DNS/配置’，必须用‘插上U盘/扫码秒推/即开即用’零阻力动词",
+                "【封面防脱敏与安全视窗】: 严禁连续使用千篇一律模板色；视窗内容高度<=525px居中y=[121, 646]，保留30px双向防裁切留白"
             ]
         },
         "top_performing_articles": top_samples,
@@ -493,17 +599,23 @@ def export_empirical_profile(overview, analyzed_articles, tier_high, tier_mid, t
     with open(out_file1, "w", encoding="utf-8") as f:
         json.dump(profile_data, f, ensure_ascii=False, indent=2)
 
-    # 2. 同步保存到 gzh-article-pipeline/references
-    pipeline_ref_dir = os.path.expanduser("~/.codex/skills/gzh-article-pipeline/references")
-    if os.path.exists(pipeline_ref_dir):
-        out_file2 = os.path.join(pipeline_ref_dir, "account_empirical_profile.json")
-        with open(out_file2, "w", encoding="utf-8") as f:
-            json.dump(profile_data, f, ensure_ascii=False, indent=2)
+    # 2. 同步保存到 gzh-article-pipeline/references (本地配置及 codex 路径)
+    target_dirs = [
+        os.path.expanduser("~/.gemini/config/skills/gzh-article-pipeline/references"),
+        os.path.expanduser("~/.codex/skills/gzh-article-pipeline/references")
+    ]
+    saved_paths = [out_file1]
+    for p_dir in target_dirs:
+        if os.path.exists(p_dir):
+            out_target = os.path.join(p_dir, "account_empirical_profile.json")
+            with open(out_target, "w", encoding="utf-8") as f:
+                json.dump(profile_data, f, ensure_ascii=False, indent=2)
+            saved_paths.append(out_target)
 
     print("📦 [Empirical Profile] 实证经验画像已同步持久化:")
-    print(f"   - {out_file1}")
-    if os.path.exists(pipeline_ref_dir):
-        print(f"   - {out_file2}\n")
+    for sp in saved_paths:
+        print(f"   - {sp}")
+    print()
 
 if __name__ == "__main__":
     main()

@@ -105,18 +105,28 @@ def generate_image_via_gemini_web(prompt, output_file_path, timeout=120):
 
     # 2. 注入提示词（必须去除换行符，因为 Chromium execCommand insertText 会在第一个换行符截断）
     print(f"2. 正在等待富文本编辑器就绪...")
-    for _ in range(20):
-        ok, res = execute_js(win_idx, tab_idx, 'document.querySelector("rich-textarea div.ql-editor") !== null')
-        if ok and res == 'true':
+    editor_sel = None
+    for _ in range(30):
+        ok, res = execute_js(win_idx, tab_idx, """(function(){
+            for (const s of ['rich-textarea div.ql-editor', 'div.ql-editor[contenteditable="true"]', '[contenteditable="true"][role="textbox"]', 'rich-textarea [contenteditable="true"]']) {
+                if (document.querySelector(s)) return 'SEL:' + s;
+            }
+            return 'WAIT';
+        })()""")
+        if ok and res.startswith("SEL:"):
+            editor_sel = res[4:]
             break
         time.sleep(0.5)
 
-    print(f"   -> 正在自动输入生图提示词...")
+    if not editor_sel:
+        raise Exception("等待 Gemini 富文本编辑器就绪超时 (15s)，请检查 Chrome 是否正常登录 gemini.google.com。")
+
+    print(f"   -> 正在自动输入生图提示词 (选择器: {editor_sel})...")
     prompt_clean = " ".join(line.strip() for line in prompt.strip().splitlines() if line.strip())
     b64_prompt = base64.b64encode(prompt_clean.encode("utf-8")).decode("ascii")
     insert_js = f"""
     (function() {{
-        const editor = document.querySelector('rich-textarea div.ql-editor');
+        const editor = document.querySelector({json.dumps(editor_sel)});
         if (!editor) return 'NO_EDITOR';
         
         editor.focus();
@@ -145,27 +155,29 @@ def generate_image_via_gemini_web(prompt, output_file_path, timeout=120):
         raise Exception(f"在 Gemini 网页端注入提示词失败: {res}")
     print(f"   -> 成功注入提示词字符数: {res.split(':')[1]} (原提示词长度: {len(prompt_clean)})")
 
-    # 3. 等待并点击发送按钮
+    # 3. 等待并点击发送按钮（兼容中英文 aria-label 与新版 UI）
     print(f"3. 正在等待发送按钮激活并点击...")
     submitted = False
-    for _ in range(12): # 最多等待 6 秒
+    for _ in range(16): # 最多等待 8 秒
         time.sleep(0.5)
-        click_send_js = """
-        (function() {
-            const sendBtn = document.querySelector('button[aria-label="发送"], button[aria-label*="发送"], button.send-button');
+        click_send_js = f"""
+        (function() {{
+            const ed = document.querySelector({json.dumps(editor_sel)});
+            const root = (ed && (ed.closest('.input-area-container') || ed.closest('form'))) || document;
+            const sendBtn = root.querySelector('button[aria-label="发送"], button[aria-label*="发送"], button[aria-label="Send message"], button[aria-label*="Send"], button.send-button');
             if (!sendBtn) return 'NO_SEND_BTN';
             if (sendBtn.disabled || sendBtn.getAttribute('aria-disabled') === 'true') return 'SEND_BTN_DISABLED';
             sendBtn.click();
-            return 'CLICKED';
-        })()
+            return 'CLICKED:' + (sendBtn.getAttribute('aria-label') || sendBtn.className);
+        }})()
         """
         ok, res = execute_js(win_idx, tab_idx, click_send_js)
-        if ok and res == "CLICKED":
+        if ok and res.startswith("CLICKED:"):
             submitted = True
             break
         elif ok and res == "SEND_BTN_DISABLED":
             # 尝试再次触发 input 事件
-            execute_js(win_idx, tab_idx, "document.querySelector('rich-textarea div.ql-editor')?.dispatchEvent(new Event('input', { bubbles: true }))")
+            execute_js(win_idx, tab_idx, f"document.querySelector({json.dumps(editor_sel)})?.dispatchEvent(new Event('input', {{ bubbles: true }}))")
 
     if not submitted:
         raise Exception(f"点击发送按钮失败: 未能激活或找到发送按钮 ({res})")

@@ -128,7 +128,29 @@ cp -R /tmp/gzh-pipeline/wechat-content-analysis "${CODEX_HOME:-$HOME/.codex}/ski
 - **本地运行保障**：`.gitignore` 默认忽略 `config.json` 与数据缓存；排版、质检与后台拉取全部在本机完成，不经过第三方中转服务。
 - **MIT 协议**：详见 [LICENSE](LICENSE)，欢迎提 Issue 或 PR。
 
-| 赞赏支持 | 奇点造物所 AI 好用工具交流群 | 主理人微信（技术交流 / 部署协助） |
-| :---: | :---: | :---: |
-| <img src="assets/sponsor.png" width="200" alt="微信赞赏支持" style="border-radius: 8px;" /> | <img src="assets/wechat-group-1130.jpg" width="200" alt="奇点造物所 AI 好用工具交流群" style="border-radius: 8px;" /> | <img src="assets/wechat.png" width="200" alt="主理人微信" style="border-radius: 8px;" /> |
-| **觉得省时，请作者喝杯冰美式** | **扫码入群交流（11-30 前有效，过期加右微信）** | **微信：`lukai391424`（备注 `开源` 或 `部署`）** |
+关注开源实战更新、反馈需求或技术交流，可以**微信搜一搜「奇点造物所」**或添加主理人微信：
+
+<table>
+  <tr>
+    <th align="center" width="50%">公众号：奇点造物所</th>
+    <th align="center" width="50%">主理人微信（备注 <code>开源</code> 或 <code>部署</code>）</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/mp-qidian-card.png" width="380" alt="微信搜一搜：奇点造物所" />
+    </td>
+    <td align="center">
+      <img src="assets/wechat-card.png" width="380" alt="微信搜一搜：lukai391424" />
+    </td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>微信交流群与赞赏支持</strong></summary>
+
+| 奇点造物所 AI 好用工具交流群 | 赞赏支持 |
+| :---: | :---: |
+| <img src="assets/wechat-group-1130.jpg" width="200" alt="奇点造物所 AI 好用工具交流群" style="border-radius: 8px;" /> | <img src="assets/sponsor.png" width="200" alt="微信赞赏支持" style="border-radius: 8px;" /> |
+| **扫码入群交流（11-30 前有效，过期加主理人微信拉群）** | **觉得省时，请作者喝杯冰美式** |
+
+</details>

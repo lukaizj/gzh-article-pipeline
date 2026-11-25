@@ -189,7 +189,7 @@ pip3 install -r /tmp/gzh-pipeline/requirements.txt
 
 ## 交流与支持 (Contact)
 
-- **本地运行保障**：`.gitignore` 默认忽略 `config.json`、`*.env` 与本地 Token 缓存；排版、质检与后台拉取全部在本机完成，不经过第三方中转服务。
+- **本地运行保障**：`.gitignore` 默认忽略 `config.json`、`account_empirical_profile.json`、`*.env` 与本地 Token 缓存；排版、质检与后台拉取全部在本机完成，不经过第三方中转服务。
 - **MIT 协议**：详见 [LICENSE](LICENSE)，欢迎提 [Issue](https://github.com/lukaizj/gzh-article-pipeline/issues) 或 PR。
 
 关注开源实战更新、反馈需求或技术交流，可以**微信搜一搜「奇点造物所」**或添加主理人微信（长期有效入口）：

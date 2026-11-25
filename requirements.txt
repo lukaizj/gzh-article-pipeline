@@ -1,0 +1,5 @@
+requests>=2.31.0
+Pillow>=10.0.0
+
+# Optional: only needed if using Gemini API mode before Chrome Web fallback
+# google-genai>=1.0.0

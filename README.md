@@ -1,6 +1,10 @@
 # GZH Article Pipeline
 
 <p align="center">
+  <strong>简体中文</strong> • <a href="README.en.md">English</a>
+</p>
+
+<p align="center">
   <img src="assets/hero-banner.jpg" alt="GZH Article Pipeline Banner" width="100%" style="border-radius: 8px;" />
 </p>
 

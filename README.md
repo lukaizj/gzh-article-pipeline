@@ -101,17 +101,27 @@
 
 ## 安装配置 (Installation)
 
-**一句话让 AI 自动安装：**
+**第一步：先安装 Skill（对 AI 助手说一句话即可）**
 ```text
 请帮我安装这个 skill：https://github.com/lukaizj/gzh-article-pipeline
 ```
+
+**第二步：开通微信开发者凭据（首次推草稿箱必做；仅跑离线质检 / 后台数据分析可跳过）**
+
+在使用全自动推草稿箱之前，需要先到微信官方后台开通以下 3 项配置（**小白按顺序点即可，约 3 分钟**）：
+
+1. 登录 [微信开发者平台](https://developers.weixin.qq.com/platform)（管理员微信扫码），点击左侧 **「我的业务」➔ 选择你的「公众号」➔「开发密钥 / 基础信息」**；
+2. 获取 **`AppID`（开发者 ID）** 与 **`AppSecret`（开发者密钥）**（若从未生成或忘记，点击“生成/重置”，该密钥仅展示一次请妥善保存）；
+3. 添加 **API IP 白名单**：把你运行脚本的电脑公网 IP 填进白名单（本机终端运行 `curl ifconfig.me` 即可看到当前公网 IP；不填或换网后会触发 `40164` 报错）；
+   > 📖 不懂如何开通与配置？可直接对照微信官方 [公众号开发接入指南](https://developers.weixin.qq.com/doc/subscription/guide/dev/) 与 [获取凭据及 IP 白名单说明](https://developers.weixin.qq.com/doc/subscription/api/base/api_getaccesstoken.html)。
+4. 安装依赖并写入密钥：运行 `pip3 install -r requirements.txt`，把 [`config.example.json`](gzh-article-pipeline/references/config.example.json) 复制为同目录下的 `config.json` 填入 `appid` 和 `appsecret`（或直接让 AI 帮你填，也可设为环境变量 `WECHAT_APPID` / `WECHAT_APPSECRET`）。
 
 <details>
 <summary><strong>手动安装、多平台路径、运行门槛与目录结构</strong></summary>
 
 **1. 分级使用门槛**
 - **零配置**：`Python 3.9+` 即可运行 `validate_article.py` 离线质检与 `olive_journal_template.py` 排版。
-- **推草稿箱**：安装 `pip3 install -r requirements.txt`（`requests`, `Pillow`），复制 [`config.example.json`](gzh-article-pipeline/references/config.example.json) 为 `config.json` 填入 `appid`/`appsecret` 并配置公众号后台 IP 白名单（或设环境变量 `WECHAT_APPID` / `WECHAT_APPSECRET`）。
+- **推草稿箱**：需完成上方「微信开发者平台 AppID / 密钥 / IP 白名单」配置并安装 `pip3 install -r requirements.txt`（`requests`, `Pillow`）。
 - **免密钥复盘 & 429 网页接管**：需 **macOS + Google Chrome**（保持登录 `mp.weixin.qq.com` / `gemini.google.com`）。
 
 **2. 手动安装命令**

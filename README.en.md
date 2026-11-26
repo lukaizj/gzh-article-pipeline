@@ -101,17 +101,27 @@ Real articles generated end-to-end by this pipeline and pushed into the WeChat M
 
 ## Installation
 
-**One-line install via Codex / Antigravity / Claude Code:**
+**Step 1: One-line install via Codex / Antigravity / Claude Code**
 ```text
 Please install this skill for me: https://github.com/lukaizj/gzh-article-pipeline
 ```
+
+**Step 2: Configure WeChat Developer Credentials (required for pushing drafts; optional for offline QA / Chrome analytics)**
+
+Before using automated draft publishing, open the official WeChat backend to enable these 3 settings (~3 minutes):
+
+1. Sign in to the [WeChat Developer Platform](https://developers.weixin.qq.com/platform) with your Official Account admin WeChat, then open **My Business (我的业务) ➔ Official Account ➔ Basic Info / Developer Key (开发密钥)**;
+2. Copy your **`AppID`** and generate/copy your **`AppSecret`** (shown once upon reset—store it safely);
+3. Add your machine's public IP to the **API IP Whitelist** (run `curl ifconfig.me` in terminal to check; missing/changed IPs trigger error `40164`);
+   > 📖 New to WeChat Official Account setup? See the official [WeChat Official Account Dev Guide](https://developers.weixin.qq.com/doc/subscription/guide/dev/) and [Access Token & IP Whitelist Docs](https://developers.weixin.qq.com/doc/subscription/api/base/api_getaccesstoken.html).
+4. Install dependencies (`pip3 install -r requirements.txt`), copy [`config.example.json`](gzh-article-pipeline/references/config.example.json) to `config.json` with your `appid` and `appsecret` (or export `WECHAT_APPID` / `WECHAT_APPSECRET`).
 
 <details>
 <summary><strong>Manual Install, Multi-Agent Paths, Tiered Requirements & Repo Tree</strong></summary>
 
 **1. Tiered Prerequisites**
 - **Zero-Config**: `Python 3.9+` runs `validate_article.py` & `olive_journal_template.py`.
-- **Draft Push**: `pip3 install -r requirements.txt` (`requests`, `Pillow`) + copy [`config.example.json`](gzh-article-pipeline/references/config.example.json) to `config.json` with `appid`/`appsecret` (add public IP to WeChat MP whitelist) or export `WECHAT_APPID` / `WECHAT_APPSECRET`.
+- **Draft Push**: Complete Step 2 above (`AppID`, `AppSecret`, IP whitelist) + `pip3 install -r requirements.txt` (`requests`, `Pillow`).
 - **Keyless Analytics & `429` Web Failover**: **macOS + Google Chrome** (signed into `mp.weixin.qq.com` / `gemini.google.com`).
 
 **2. Manual CLI Install**
